@@ -11,7 +11,7 @@ var client = JPush.buildClient('9a560a04b31b41c643b8445f', 'b1740488c70f66f5e3c7
 var mongoose = require('mongoose');
 
 //声明数据库链接
-mongoose.connect('mongodb://10.211.55.3/test', function(err){
+mongoose.connect('mongodb://localhost/school', function(err){
   console.log(err);
 });
 
@@ -1567,6 +1567,9 @@ router.get('/getSignInfor', function(req,res,next){
   });
 });
 
+//SignIn.update({}, { $set: { SignInDate: new Date('') }}, { multi: true }, function(err,doc){
+//  //
+//});
 
 module.exports = router;
 

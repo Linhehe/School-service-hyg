@@ -18,7 +18,9 @@ var SignInSchema = new mongoose.Schema({
     SignInDate: Date, // 签到时间
     SignInAddress: {lat: Number,lng: Number}, // 签到的位置
     IsSignIn: Number, // 是否签到 （0为否，1为是）
-    IsVacation: Number // 是否请假 （0为否，1为是）
+    IsVacation: Number, // 是否请假 （0为否，1为是）
+
+    IsTransferClass: Number // 是否调课（0为否，1为新数据、可用，-1则本签到数据为旧数据、不可用）
 });
 
 mongoose.model('SignIn', SignInSchema);
