@@ -227,7 +227,7 @@ router.get('/myclass',function(req,res,next){
         else{
           console.log(doc.Students.length)
           for(i=0;i<doc.Students.length;i++) {
-            doc.Students[i].Photo = 'http://172.16.20.123:3000/images/'+doc.Students[i].Photo;
+            doc.Students[i].Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Students[i].Photo;
           }
           res.json(doc.Students);
         }
@@ -239,7 +239,7 @@ router.get('/myclass_infor',function(req,res,next){
   Student.findOne({_id:req.query.id},function(err,doc){
     if(err){next(err)}
     else{
-      doc.Photo = 'http://172.16.20.123:3000/images/'+doc.Photo
+      doc.Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Photo
       res.json(doc)
     }
   })
@@ -251,7 +251,7 @@ router.get('/student_person',function(req,res,next){
     if(err!=null){next(err);}
     else{
       console.log(doc);
-      doc.Photo = 'http://172.16.20.123:3000/images/'+doc.Photo
+      doc.Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Photo
       res.json(doc)
     }
   })
@@ -716,7 +716,7 @@ router.get('/teacher_person',function(req,res,next){
     if(err!=null){next(err);}
     else{
       console.log(doc);
-      doc.Photo = 'http://172.16.20.123:3000/images/'+doc.Photo
+      doc.Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Photo
       res.json(doc)
     }
   })
@@ -825,7 +825,7 @@ router.get('/tea_student',function(req,res,next){
             if(err){next(err)}
             else{
                 for(i=0;i<doc.Students.length;i++) {
-                    doc.Students[i].Photo = 'http://172.16.20.123:3000/images/'+doc.Students[i].Photo;
+                    doc.Students[i].Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Students[i].Photo;
                 }
                 res.json(doc.Students);
             }
@@ -836,7 +836,7 @@ router.get('/tea_stu_preson',function(req,res,next){
     Student.findOne({_id:req.query.StudentId},function(err,doc){
         if(err){next(err)}
         else{
-            doc.Photo = 'http://172.16.20.123:3000/images/'+doc.Photo
+            doc.Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Photo
             res.json(doc)
         }
     })
