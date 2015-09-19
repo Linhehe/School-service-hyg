@@ -11,7 +11,7 @@ var client = JPush.buildClient('9a560a04b31b41c643b8445f', 'b1740488c70f66f5e3c7
 var mongoose = require('mongoose');
 
 //声明数据库链接
-mongoose.connect('mongodb://localhost/school', function(err){
+mongoose.connect('mongodb://huyugui.ddns.net:27017/school', function(err){
   console.log(err);
 });
 
@@ -804,9 +804,50 @@ router.post('/tea_files', function(req,res,next){
   })
 });
 
+
+////学生端、获取我的班级信息
+//router.get('/myclass',function(req,res,next){
+//  Class.findOne({_id:req.query.Classes})
+//      .populate('Students')
+//      .exec(function(err,doc){
+//        if(err){next(err);}
+//        else{
+//          console.log(doc.Students.length)
+//          for(i=0;i<doc.Students.length;i++) {
+//            doc.Students[i].Photo = 'http://172.16.42.130:3000/images/'+doc.Students[i].Photo;
+//          }
+//          res.json(doc.Students);
+//        }
+//      })
+//});
+
+//老师页面的学院列表信息
+router.get('/tea_college', function(req,res,next){
+  College.find({},function(err,doc){
+    if(err){next(err)}
+    else{
+      console.log(doc);
+      res.json(doc);
+    }
+  })
+});
+
+//老师页面的专业信息
+router.get('/tea_profession', function(req,res,next){
+  College.findOne({_id:req.query.collegeId})
+      .populate('Professions')
+      .exec(function(err,doc){
+        if(err){next(err);}
+        else{
+          res.json(doc.Professions);
+          console.log(doc.Professions)
+        }
+      })
+});
+
 //老师页面的班级列表信息
 router.get('/tea_class',function(req,res,next){
-  Teacher.findOne({Number:req.query.Number})
+  Profession.findOne({_id:req.query.professionId})
       .populate('Classes')
       .exec(function(err,doc){
         if(err){next(err);}
@@ -836,8 +877,8 @@ router.get('/tea_stu_preson',function(req,res,next){
     Student.findOne({_id:req.query.StudentId},function(err,doc){
         if(err){next(err)}
         else{
-            doc.Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Photo
-            res.json(doc)
+          doc.Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Photo
+          res.json(doc)
         }
     })
 });
@@ -1497,9 +1538,10 @@ var j4 = schedule.scheduleJob(rule4, function(){
 
 router.get('/getSignIn', function(req,res,next){
 
-  SignIn.find({ClassId: '55ed4d83100c389106ad7874', BeginSubjectDate: {$gte: new Date('2015-9-21')}, EndSubjectDate: {$lte: new Date()}})
+  SignIn.find({ClassId:req.query.ClassId, BeginSubjectDate: {$gte: new Date('2015-9-17')}, EndSubjectDate: {$lte: new Date()}})
       .populate('StudentId')
       .exec(function(err,doc){
+
         //
         var array = new Array();
         doc.forEach(function(key,value){
@@ -1535,6 +1577,7 @@ router.get('/getSignIn', function(req,res,next){
         for(var i=0; i<ress.length; i++){
           Student.findOne({_id: ress[i][0]}, function(err, doc){
             //console.log(qq);
+            doc.Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Photo;
             array22.push({StudentName: doc.StudentName, StudentId: doc._id, Photo: doc.Photo, Number: 0});
             qq++;
             if(qq == ress.length){
@@ -1552,6 +1595,8 @@ router.get('/getSignIn', function(req,res,next){
               }
               console.log(array22);
               res.json(array22);
+
+
             }
           });
         }
@@ -1560,9 +1605,9 @@ router.get('/getSignIn', function(req,res,next){
 });
 
 router.get('/getSignInfor', function(req,res,next){
-  SignIn.find({StudentId: req.query.StudentId, IsSignIn: 0, BeginSubjectDate:{$gte: new Date('2015-9-21')}, EndSubjectDate:{$lte: new Date()}}, function(err,signs){
+  SignIn.find({StudentId: req.query.StudentId, IsSignIn: 0, BeginSubjectDate:{$gte: new Date('2015-9-17')}, EndSubjectDate:{$lte: new Date()}}, function(err,signs){
     //
-    //console.log(signs);
+    console.log(signs);
     res.json(signs);
   });
 });
