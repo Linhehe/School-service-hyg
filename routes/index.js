@@ -139,7 +139,7 @@ router.get('/check_phone',function(req,res,next){
 });
 //用户注册第二步、保存用户信息
 router.post('/register',function(req,res,next){
-  Student.findOneAndUpdate({IdCode:req.body.ID_card},{Password:req.body.Password,Phone:req.body.Phone},function(err,doc){
+  Student.findOneAndUpdate({ID_card:req.body.ID_card},{Password:req.body.Password,Phone:req.body.Phone},function(err,doc){
     if(err){next(err)}
     else{
       res.json(doc);
@@ -171,7 +171,7 @@ router.post('/save_password',function(req,res,next){
 router.get('/login',function(req,res,next){
   console.log(req.query);
   if(req.query.type == '学生'){
-    Student.findOne({Phone:req.query.Phone,Password:req.query.Password},function(err,doc){
+    Student.findOne({Number:req.query.Number,Password:req.query.Password},function(err,doc){
       if(err){next(err)}
       else{
         if(doc){
@@ -201,7 +201,7 @@ router.get('/login',function(req,res,next){
     });
   }
   else{
-    Teacher.findOne({Number:req.query.Phone,Password:req.query.Password},function(err,doc){
+    Teacher.findOne({Number:req.query.Number,Password:req.query.Password},function(err,doc){
 
       if(err){next(err)}
       else{
@@ -1615,6 +1615,16 @@ router.get('/getSignInfor', function(req,res,next){
 //SignIn.update({}, { $set: { SignInDate: new Date('') }}, { multi: true }, function(err,doc){
 //  //
 //});
+
+router.post('/getwifimessage', function(req,res,next){
+  Class.findOne({_id: req.body.ClassId}, function(err,doc){
+    if(err){
+      next(err);
+    } else{
+      res.json(doc);
+    }
+  })
+});
 
 module.exports = router;
 
