@@ -11,7 +11,7 @@ var client = JPush.buildClient('9a560a04b31b41c643b8445f', 'b1740488c70f66f5e3c7
 var mongoose = require('mongoose');
 
 //声明数据库链接
-mongoose.connect('mongodb://huyugui.ddns.net:27017/school', function(err){
+mongoose.connect('mongodb://huyugui.eicp.net:27017/school', function(err){
   console.log(err);
 });
 
@@ -227,7 +227,7 @@ router.get('/myclass',function(req,res,next){
         else{
           console.log(doc.Students.length)
           for(i=0;i<doc.Students.length;i++) {
-            doc.Students[i].Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Students[i].Photo;
+            doc.Students[i].Photo = 'http://huyugui.eicp.net:4343/images/'+doc.Students[i].Photo;
           }
           res.json(doc.Students);
         }
@@ -239,7 +239,7 @@ router.get('/myclass_infor',function(req,res,next){
   Student.findOne({_id:req.query.id},function(err,doc){
     if(err){next(err)}
     else{
-      doc.Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Photo
+      doc.Photo = 'http://huyugui.eicp.net:4343/images/'+doc.Photo
       res.json(doc)
     }
   })
@@ -251,7 +251,7 @@ router.get('/student_person',function(req,res,next){
     if(err!=null){next(err);}
     else{
       console.log(doc);
-      doc.Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Photo
+      doc.Photo = 'http://huyugui.eicp.net:4343/images/'+doc.Photo
       res.json(doc)
     }
   })
@@ -716,7 +716,7 @@ router.get('/teacher_person',function(req,res,next){
     if(err!=null){next(err);}
     else{
       console.log(doc);
-      doc.Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Photo
+      doc.Photo = 'http://huyugui.eicp.net:4343/images/'+doc.Photo
       res.json(doc)
     }
   })
@@ -866,7 +866,7 @@ router.get('/tea_student',function(req,res,next){
             if(err){next(err)}
             else{
                 for(i=0;i<doc.Students.length;i++) {
-                    doc.Students[i].Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Students[i].Photo;
+                    doc.Students[i].Photo = 'http://huyugui.eicp.net:4343/images/'+doc.Students[i].Photo;
                 }
                 res.json(doc.Students);
             }
@@ -877,7 +877,7 @@ router.get('/tea_stu_preson',function(req,res,next){
     Student.findOne({_id:req.query.StudentId},function(err,doc){
         if(err){next(err)}
         else{
-          doc.Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Photo
+          doc.Photo = 'http://huyugui.eicp.net:4343/images/'+doc.Photo
           res.json(doc)
         }
     })
