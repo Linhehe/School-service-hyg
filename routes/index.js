@@ -1626,6 +1626,21 @@ router.post('/getwifimessage', function(req,res,next){
   })
 });
 
+//管理后台的老师登陆
+router.get('/manage_login',function(req,res,next){
+  Teacher.findOne({Number:req.query.Number,Password:req.query.Password},function(err,doc){
+    if(err){next(err)}
+    else{
+      if(doc){
+        res.json(doc);
+      }
+      else{
+        res.send('请输入正确的信息');
+      }
+    }
+  })
+})
+
 module.exports = router;
 
 //1161,1990
