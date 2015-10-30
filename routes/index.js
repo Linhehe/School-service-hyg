@@ -176,24 +176,25 @@ router.get('/login',function(req,res,next){
       else{
         if(doc){
           //
-          if(doc.DeviceId){
-            //
-            if(doc.DeviceId == req.query.DeviceId){
-              res.json(doc);
-            } else{
-              res.send('设备不正确');
-            }
-          } else{
-            //
-            Student.findOneAndUpdate({_id: doc._id}, {DeviceId: req.query.DeviceId}, function(err,stu){
-              if(err){
-                console.error(err);
-              } else{
-                console.log(stu);
-                res.json(doc);
-              }
-            });
-          }
+          res.json(doc);
+          //if(doc.DeviceId){
+          //  //
+          //  if(doc.DeviceId == req.query.DeviceId){
+          //    res.json(doc);
+          //  } else{
+          //    res.send('设备不正确');
+          //  }
+          //} else{
+          //  //
+          //  Student.findOneAndUpdate({_id: doc._id}, {DeviceId: req.query.DeviceId}, function(err,stu){
+          //    if(err){
+          //      console.error(err);
+          //    } else{
+          //      console.log(stu);
+          //      res.json(doc);
+          //    }
+          //  });
+          //}
         } else{
           res.send('请输入正确的信息');
         }
