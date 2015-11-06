@@ -899,9 +899,9 @@ router.post('/vacation', function(req,res,next){
   //
   console.log(req.body);
   var BeginDate = new Date(req.body.BeginDate);
-  BeginDate.setHours(24,00,00);
+  //BeginDate.setHours(24,00,00);
   var EndDate = new Date(req.body.EndDate);
-  EndDate.setHours(24,00,00);
+  //EndDate.setHours(24,00,00);
   var vacation = new Vacation({
     Student: req.body.Student,
     BeginDate: BeginDate,
