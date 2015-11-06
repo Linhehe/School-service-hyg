@@ -175,25 +175,26 @@ router.get('/login',function(req,res,next){
       if(err){next(err)}
       else{
         if(doc){
+res.json(doc);
           //
-          if(doc.DeviceId){
+//          if(doc.DeviceId){
             //
-            if(doc.DeviceId == req.query.DeviceId){
-              res.json(doc);
-            } else{
-              res.send('设备不正确');
-            }
-          } else{
+  //          if(doc.DeviceId == req.query.DeviceId){
+    //          res.json(doc);
+      //      } else{
+        //      res.send('设备不正确');
+          //  }
+     //     } else{
             //
-            Student.findOneAndUpdate({_id: doc._id}, {DeviceId: req.query.DeviceId}, function(err,stu){
-              if(err){
-                console.error(err);
-              } else{
-                console.log(stu);
-                res.json(doc);
-              }
-            });
-          }
+       //     Student.findOneAndUpdate({_id: doc._id}, {DeviceId: req.query.DeviceId}, function(err,stu){
+         //     if(err){
+          //      console.error(err);
+           //   } else{
+             //   console.log(stu);
+              //  res.json(doc);
+            //  }
+         //   });
+       //   }
         } else{
           res.send('请输入正确的信息');
         }
@@ -1639,7 +1640,101 @@ router.get('/manage_login',function(req,res,next){
       }
     }
   })
-})
+});
+
+// 签到
+router.post('/SignIn', function(req,res,next){
+  function CountSignIn(startTime, signinTime){
+    var result = (signinTime.getHours()-startTime.getHours())*60 + (signinTime.getMinutes()-startTime.getMinutes());
+    return result;
+  }
+  var date = Date.parse(req.body.date);
+  date = new Date(date);
+  SignIn.findOne({StudentId: req.body.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}}, function(err, signs){
+    if(err){
+      next(err);
+    } else{
+      if(signs){
+        if(signs.FirstSignInState == 0){
+          if(CountSignIn(signs.BeginSubjectDate, date)<=10){
+            console.log('可以签到');
+            signs.FirstSignInState = 1;
+            signs.FirstSignInTime = date;
+            signs.save();
+            res.send('签到成功');
+          } else if(CountSignIn(signs.BeginSubjectDate, date)>10 && CountSignIn(signs.BeginSubjectDate, date)<=25){
+            console.log('迟到');
+            signs.FirstSignInState = 2;
+            signs.FirstSignInTime = date;
+            signs.save();
+            res.send('签到成功');
+          } else{
+            console.log('无效签到');
+            signs.FirstSignInState = -1;
+            signs.FirstSignInTime = date;
+            signs.save();
+            res.send('签到成功');
+          }
+        } else{
+          res.send('你已经签到了');
+        }
+      } else{
+        res.send('现在不是签到时间');
+      }
+    }
+  });
+});
+
+// 签退
+router.post('/SignOut', function(req,res,next){
+  function CountSignOut(endTime, signinTime){
+    var result = (endTime.getHours()-signinTime.getHours())*60 + (endTime.getMinutes()-signinTime.getMinutes());
+    return result;
+  }
+  var date = Date.parse(req.body.date);
+  date = new Date(date);
+  SignIn.findOne({StudentId: req.body.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}}, function(err, signs){
+    if(err){
+      next(err);
+    } else{
+      if(signs){
+        if(signs.SecondSignInState == 0){
+//          if(CountSignOut(signs.EndSubjectDate,date)<=10){
+//            console.log('可以签退');
+            signs.SecondSignInState = 1;
+            signs.SecondSignInTime = date;
+            signs.save();
+            res.send('签退成功');
+//          } else{
+//            res.send('现在不是签退时间');
+//          }
+        } else{
+          res.send('你已经签退了');
+        }
+      } else{
+        res.send('现在不需要签退');
+      }
+    }
+  });
+});
+
+// 查看是否有课
+router.get('/CheackIfSign', function(req,res,next){
+  var date = Date.parse(req.query.date);
+  date = new Date(date);
+  SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}}, function(err, signs){
+    if(err){
+      next(err);
+    } else{
+      if(signs){
+        console.log(signs);
+        res.json(signs);
+      } else{
+        res.send('没课');
+      }
+    }
+  });
+});
 
 module.exports = router;
 
