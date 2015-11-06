@@ -473,19 +473,19 @@ router.get('/get_wifi', function(req,res,next){
 
 
 //安卓、普通学生检查自己的签到状态
-router.get('/check_stu',function(req,res,next){
-  console.log(req.query.StudentId);
-  Student.findOne({_id: req.query.StudentId},function(err,doc){
-    if(doc.IsSignIn == '1'){
-      res.send('1');
-      console.log('已经签到了')
-    }
-    else{
-      console.log('未签到')
-      res.send('0');
-    }
-  })
-})
+//router.get('/check_stu',function(req,res,next){
+//  console.log(req.query.StudentId);
+//  Student.findOne({_id: req.query.StudentId},function(err,doc){
+//    if(doc.IsSignIn == '1'){
+//      res.send('1');
+//      console.log('已经签到了')
+//    }
+//    else{
+//      console.log('未签到')
+//      res.send('0');
+//    }
+//  })
+//})
 
 //学生端，班委帮忙签到确定
 router.post('/help_sign',function(req,res,next){
@@ -1655,6 +1655,7 @@ router.post('/SignIn', function(req,res,next){
       next(err);
     } else{
       if(signs){
+        console.log(typeof signs.FirstSignInState);
         if(signs.FirstSignInState == 0){
           if(CountSignIn(signs.BeginSubjectDate, date)<=10){
             console.log('可以签到');
