@@ -24,8 +24,8 @@
       <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.8695652">
-              <caret line="1625" column="9" selection-start-line="1625" selection-start-column="9" selection-end-line="1625" selection-end-column="9" />
+            <state vertical-scroll-proportion="0.9627329">
+              <caret line="1779" column="3" selection-start-line="1779" selection-start-column="3" selection-end-line="1779" selection-end-column="3" />
               <folding />
             </state>
           </provider>
@@ -368,7 +368,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/routes/index.js</url>
-          <line>1693</line>
+          <line>1781</line>
           <option name="timeStamp" value="45" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
@@ -388,7 +388,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/routes/index.js</url>
-          <line>1743</line>
+          <line>1831</line>
           <option name="timeStamp" value="51" />
         </line-breakpoint>
       </breakpoints>
@@ -739,8 +739,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8695652">
-          <caret line="1625" column="9" selection-start-line="1625" selection-start-column="9" selection-end-line="1625" selection-end-column="9" />
+        <state vertical-scroll-proportion="0.9627329">
+          <caret line="1779" column="3" selection-start-line="1779" selection-start-column="3" selection-end-line="1779" selection-end-column="3" />
           <folding />
         </state>
       </provider>
