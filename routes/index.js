@@ -618,7 +618,11 @@ router.post('/test', function (req,res,next){
 //学生端、签到定位
 router.get('/getpoint',function(req,res,next){
   var date = Date.parse(req.query.date);
+  console.log(date);
+  console.log(typeof date);
   date = new Date(date);
+  console.log(date);
+  console.log(typeof date);
   SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}}, function(err, signs){
     if(err){
       next(err);
@@ -935,7 +939,7 @@ router.post('/vacation', function(req,res,next){
       //next(err);
       console.error(err);
     } else{
-      console.log(doc);
+      res.json(doc);
       client.push().setPlatform('ios', 'android')
           .setAudience(JPush.tag(req.body.ClassesId+'_3'))
           .setNotification("有新的请假申请", JPush.ios("有新的请假申请", "APP提示"), JPush.android("有新的请假申请", "APP提示", 2))
