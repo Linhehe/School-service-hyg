@@ -617,30 +617,51 @@ router.post('/test', function (req,res,next){
 //ios、学生签到获取教学区
 //学生端、签到定位
 router.get('/getpoint',function(req,res,next){
-  var MyAddress = JSON.parse(req.query.MyAddress);
-  console.log(MyAddress);
-  Address.find({},function(err,doc){
-    if(err){next(err)}
-    else{
-      console.log(doc);
-      for(i=0;i<doc.length;i++){
-        var x = (MyAddress.lng-doc[i].Address.lng);
-        console.log('x:'+x);
-        var y = (MyAddress.lat-doc[i].Address.lat);
-        console.log('y:'+y);
-        var r =x*x+y*y;
-        console.log('r:'+r);
-        if(r <= doc[i].Scope){
-          res.json('1');
-          console.log('对的')
-        }
-        else{
-          res.json('0');
-          console.log('错的');
-        }
+  var date = Date.parse(req.query.date);
+  date = new Date(date);
+  SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}}, function(err, signs){
+    if(err){
+      next(err);
+    } else{
+      if(signs){
+        Address.findOne({AddressName: signs.AddressName}, function(err, address){
+          if(err){
+            next(err);
+          } else{
+            if(address){
+              res.json(address);
+            }
+          }
+        });
+      } else{
+        res.send('没课');
       }
     }
   });
+  //var MyAddress = JSON.parse(req.query.MyAddress);
+  //console.log(MyAddress);
+  //Address.find({},function(err,doc){
+  //  if(err){next(err)}
+  //  else{
+  //    console.log(doc);
+  //    for(i=0;i<doc.length;i++){
+  //      var x = (MyAddress.lng-doc[i].Address.lng);
+  //      console.log('x:'+x);
+  //      var y = (MyAddress.lat-doc[i].Address.lat);
+  //      console.log('y:'+y);
+  //      var r =x*x+y*y;
+  //      console.log('r:'+r);
+  //      if(r <= doc[i].Scope){
+  //        res.json('1');
+  //        console.log('对的')
+  //      }
+  //      else{
+  //        res.json('0');
+  //        console.log('错的');
+  //      }
+  //    }
+  //  }
+  //});
 });
 
 //ios学生确定签到
