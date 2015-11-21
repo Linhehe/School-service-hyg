@@ -994,15 +994,17 @@ router.put('/verify', function(req,res,next){
     if(err){
       next(err);
     } else{
-      SignIn.update({BeginSubjectDate:{$gte: vacations.BeginDate}, EndSubjectDate:{$lte: vacations.EndDate}, StudentId: vacations.Student}, { $set: { IsVacation: 1 }}, { multi: true }, function(err,signIns){
-        //
-        if(err){
-          next(err);
-        } else{
+      if(req.body.Status == '1'){
+        SignIn.update({BeginSubjectDate:{$gte: vacations.BeginDate}, EndSubjectDate:{$lte: vacations.EndDate}, StudentId: vacations.Student}, { $set: { IsVacation: 1 }}, { multi: true }, function(err,signIns){
           //
-          console.log(signIns);
-        }
-      });
+          if(err){
+            next(err);
+          } else{
+            //
+            console.log(signIns);
+          }
+        });
+      }
     }
   });
   //
@@ -1609,7 +1611,7 @@ router.get('/getSignIn', function(req,res,next){
 //
   var beginDay = new Date("2015-11-3");
   var now = new Date();
-  SignIn.find({ClassId: req.query.ClassId, BeginSubjectDate: {$gte: beginDay}, EndSubjectDate: {$lte: now}, SecondSignInState: 1, FirstSignInState: -1, IsVacation: 0})
+  SignIn.find({ClassId: req.query.ClassId, BeginSubjectDate: {$gte: beginDay}, EndSubjectDate: {$lte: new Date("2015-11-21")}, SecondSignInState: 1, FirstSignInState: -1, IsVacation: 0})
       .populate('StudentId')
       .exec(function(err,signs){
         var array = [];
