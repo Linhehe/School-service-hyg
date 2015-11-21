@@ -1611,7 +1611,7 @@ router.get('/getSignIn', function(req,res,next){
 //
   var beginDay = new Date("2015-11-3");
   var now = new Date();
-  SignIn.find({ClassId: req.query.ClassId, BeginSubjectDate: {$gte: beginDay}, EndSubjectDate: {$lte: new Date()}, SecondSignInState: 1, FirstSignInState: -1, IsVacation: 0})
+  SignIn.find({ClassId: req.query.ClassId, BeginSubjectDate: {$gte: beginDay}, EndSubjectDate: {$lte: new Date()}, IsVacation: 0}) //  SecondSignInState: 1, FirstSignInState: -1,
       .populate('StudentId')
       .exec(function(err,signs){
         var array = [];
