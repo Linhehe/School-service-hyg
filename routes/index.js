@@ -11,7 +11,7 @@ var client = JPush.buildClient('9a560a04b31b41c643b8445f', 'b1740488c70f66f5e3c7
 var mongoose = require('mongoose');
 
 //声明数据库链接
-mongoose.connect('mongodb://huyugui.eicp.net:27017/test', function(err){
+mongoose.connect('mongodb://huyugui.eicp.net:27017/school', function(err){
   console.log(err);
 });
 
@@ -252,7 +252,7 @@ router.get('/student_person',function(req,res,next){
     if(err!=null){next(err);}
     else{
       console.log(doc);
-      doc.Photo = 'http://huyugui.eicp.net:4343/images/'+doc.Photo
+      doc.Photo = 'http://huyugui.eicp.net:4343/images/'+doc.Photo;
       res.json(doc)
     }
   })
@@ -1922,8 +1922,8 @@ function Ctnot(startTime,endTime,signInTime,signOutTime){
 
 var rule5 = new schedule.RecurrenceRule();
 
-rule5.hour = 10;
-rule5.minute = 52;
+rule5.hour = 23;
+rule5.minute = 30;
 
 var j5 = schedule.scheduleJob(rule5, function(){
   //
