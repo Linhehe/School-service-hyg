@@ -11,7 +11,7 @@ var client = JPush.buildClient('9a560a04b31b41c643b8445f', 'b1740488c70f66f5e3c7
 var mongoose = require('mongoose');
 
 //声明数据库链接
-mongoose.connect('mongodb://huyugui.eicp.net:27017/school', function(err){
+mongoose.connect('mongodb://huyugui.eicp.net:27017/test', function(err){
   console.log(err);
 });
 
@@ -995,7 +995,7 @@ router.put('/verify', function(req,res,next){
       next(err);
     } else{
       if(req.body.Status == '1'){
-        SignIn.update({BeginSubjectDate:{$gte: vacations.BeginDate}, EndSubjectDate:{$lte: vacations.EndDate}, StudentId: vacations.Student}, { $set: { IsVacation: 1 }}, { multi: true }, function(err,signIns){
+        SignIn.update({BeginSubjectDate:{$gte: vacations.BeginDate}, EndSubjectDate:{$lte: vacations.EndDate}, StudentId: vacations.Student}, { $set: { IsVacation: 1 , Ctnot: -2 }}, { multi: true }, function(err,signIns){
           //
           if(err){
             next(err);
@@ -1568,53 +1568,10 @@ var j4 = schedule.scheduleJob(rule4, function(){
 
 
 router.get('/getSignIn', function(req,res,next){
-
   //
-  function Ctnot(startTime,endTime,signInTime,signOutTime){
-    //
-    if(startTime && endTime && signInTime && signOutTime){
-      // a: 应该上课的节数
-      var a = ((endTime.getHours()-startTime.getHours())*60 + (endTime.getMinutes()-startTime.getMinutes()))/55;
-      // b: 实际上课的节数
-      var b = ((signOutTime.getHours()-signInTime.getHours())*60 + (signOutTime.getMinutes()-signInTime.getMinutes()))/55;
-      //
-      //var c = parseInt(a)-parseInt(b);
-      var c = (1-Math.round(b)/parseInt(a))*parseInt(a);
-      return c;
-    } else if(startTime && endTime && signInTime){
-      // a: 应该上课的节数
-      var a = ((endTime.getHours()-startTime.getHours())*60 + (endTime.getMinutes()-startTime.getMinutes()))/55;
-      // b: 实际上课的节数
-      var b = 0;
-      //
-      //var c = parseInt(a)-parseInt(b);
-      var c = parseInt(a);
-      return c;
-    } else if(startTime && endTime && signOutTime){
-      // a: 应该上课的节数
-      var a = ((endTime.getHours()-startTime.getHours())*60 + (endTime.getMinutes()-startTime.getMinutes()))/55;
-      // b: 实际上课的节数
-      var b = 0;
-      //
-      //var c = parseInt(a)-parseInt(b);
-      var c = parseInt(a);
-      return c;
-    } else{
-      // a: 应该上课的节数
-      var a = ((endTime.getHours()-startTime.getHours())*60 + (endTime.getMinutes()-startTime.getMinutes()))/55;
-      // b: 实际上课的节数
-      var b = 0;
-      //
-      //var c = parseInt(a)-parseInt(b);
-      var c = parseInt(a);
-      return c;
-    }
-  }
-//console.log(Ctnot(new Date("2015-11-3 14:20"), new Date("2015-11-3 17:05"), new Date("2015-11-3 14:30"), new Date("2015-11-3 17:05")));
-//
   var beginDay = new Date("2015-11-3");
   var now = new Date();
-  SignIn.find({ClassId: req.query.ClassId, BeginSubjectDate: {$gte: beginDay}, EndSubjectDate: {$lte: new Date()}, IsVacation: 0}) //  SecondSignInState: 1, FirstSignInState: -1,
+  SignIn.find({ClassId: req.query.ClassId, BeginSubjectDate: {$gte: beginDay}, EndSubjectDate: {$lte: new Date()}, Ctnot: {$gte: 0}})
       .populate('StudentId')
       .exec(function(err,signs){
         var array = [];
@@ -1625,14 +1582,14 @@ router.get('/getSignIn', function(req,res,next){
               //
               if(arr.StudentId.toString() == item.StudentId._id.toString()){
                 //
-                arr.Ctnot = parseInt(arr.Ctnot)+parseInt(Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime))
+                arr.Ctnot = parseInt(arr.Ctnot) + parseInt(item.Ctnot)
               } else{
                 //
                 array.push({
                   StudentId: item.StudentId._id,
                   StudentName: item.StudentId.StudentName,
                   Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
-                  Ctnot: Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime),
+                  Ctnot: item.Ctnot,
                   SubjectName: item.SubjectName,
                   BeginSubjectDate: item.BeginSubjectDate,
                   EndSubjectDate: item.EndSubjectDate
@@ -1644,130 +1601,63 @@ router.get('/getSignIn', function(req,res,next){
               StudentId: item.StudentId._id,
               StudentName: item.StudentId.StudentName,
               Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
-              Ctnot: Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime),
+              Ctnot: item.Ctnot,
               SubjectName: item.SubjectName,
               BeginSubjectDate: item.BeginSubjectDate,
               EndSubjectDate: item.EndSubjectDate
             })
           }
         });
-        console.log(array);
         res.json(array);
       });
-
-//  SignIn.find({ClassId:req.query.ClassId, BeginSubjectDate: {$gte: new Date('2015-9-17')}, EndSubjectDate: {$lte: new Date()}})
-//      .populate('StudentId')
-//      .exec(function(err,doc){
-//
-//        //
-//        var array = new Array();
-//        doc.forEach(function(key,value){
-//          //console.log(key+" = "+value);
-//          if(key.IsSignIn == 0){
-//            //console.log(typeof key.StudentId.StudentName);
-//            array.push(key.StudentId._id);
-//          }
-//        });
-//        //console.log(array);
-//        var ress = [];
-//        array.sort();
-//        for(var i = 0;i<array.length;)
-//        {
-//
-//          var count = 0;
-//          for(var j=i;j<array.length;j++)
-//          {
-//
-//            if(array[i] == array[j])
-//            {
-//              count++;
-//            }
-//
-//          }
-//          ress.push([array[i],count]);
-//          i+=count;
-//
-//        }
-//        var array22 = new Array();
-//        var qq = 0;
-////res 二维数维中保存了 值和值的重复数
-//        for(var i=0; i<ress.length; i++){
-//          Student.findOne({_id: ress[i][0]}, function(err, doc){
-//            //console.log(qq);
-//            doc.Photo = 'http://huyugui.ddns.net:4343/images/'+doc.Photo;
-//            array22.push({StudentName: doc.StudentName, StudentId: doc._id, Photo: doc.Photo, Number: 0});
-//            qq++;
-//            if(qq == ress.length){
-//              //console.log(array22);
-//              //console.log(res);
-//              for(var j=0; j<ress.length; j++){
-//                //console.log(res[j][0]);
-//                for(var q=0; q<array22.length; q++){
-//                  array22[q].StudentId = array22[q].StudentId.toString();
-//                  if(ress[j][0] == array22[q].StudentId){
-//                    //console.log(array22[q]);
-//                    array22[q].Number = ress[j][1];
-//                  }
-//                }
-//              }
-//              console.log(array22);
-//              res.json(array22);
-//
-//
-//            }
-//          });
-//        }
-//        //res.json(array22);
-//      });
+  //SignIn.find({ClassId: req.query.ClassId, BeginSubjectDate: {$gte: beginDay}, EndSubjectDate: {$lte: new Date()}, IsVacation: 0}) //  SecondSignInState: 1, FirstSignInState: -1,
+  //    .populate('StudentId')
+  //    .exec(function(err,signs){
+  //      var array = [];
+  //      signs.forEach(function(item, callback){
+  //        //
+  //        if(array.length != 0){
+  //          array.forEach(function(arr, callback){
+  //            //
+  //            if(arr.StudentId.toString() == item.StudentId._id.toString()){
+  //              //
+  //              arr.Ctnot = parseInt(arr.Ctnot)+parseInt(Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime))
+  //            } else{
+  //              //
+  //              array.push({
+  //                StudentId: item.StudentId._id,
+  //                StudentName: item.StudentId.StudentName,
+  //                Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
+  //                Ctnot: Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime),
+  //                SubjectName: item.SubjectName,
+  //                BeginSubjectDate: item.BeginSubjectDate,
+  //                EndSubjectDate: item.EndSubjectDate
+  //              })
+  //            }
+  //          });
+  //        } else{
+  //          array.push({
+  //            StudentId: item.StudentId._id,
+  //            StudentName: item.StudentId.StudentName,
+  //            Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
+  //            Ctnot: Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime),
+  //            SubjectName: item.SubjectName,
+  //            BeginSubjectDate: item.BeginSubjectDate,
+  //            EndSubjectDate: item.EndSubjectDate
+  //          })
+  //        }
+  //      });
+  //      console.log(array);
+  //      res.json(array);
+  //    });
 });
 
 router.get('/StudentViewCtnot', function(req,res,next){
   //
-  function Ctnot(startTime,endTime,signInTime,signOutTime){
-    //
-    if(startTime && endTime && signInTime && signOutTime){
-      // a: 应该上课的节数
-      var a = ((endTime.getHours()-startTime.getHours())*60 + (endTime.getMinutes()-startTime.getMinutes()))/55;
-      // b: 实际上课的节数
-      var b = ((signOutTime.getHours()-signInTime.getHours())*60 + (signOutTime.getMinutes()-signInTime.getMinutes()))/55;
-      //
-      //var c = parseInt(a)-parseInt(b);
-      var c = (1-Math.round(b)/parseInt(a))*parseInt(a);
-      return c;
-    } else if(startTime && endTime && signInTime){
-      // a: 应该上课的节数
-      var a = ((endTime.getHours()-startTime.getHours())*60 + (endTime.getMinutes()-startTime.getMinutes()))/55;
-      // b: 实际上课的节数
-      var b = 0;
-      //
-      //var c = parseInt(a)-parseInt(b);
-      var c = parseInt(a);
-      return c;
-    } else if(startTime && endTime && signOutTime){
-      // a: 应该上课的节数
-      var a = ((endTime.getHours()-startTime.getHours())*60 + (endTime.getMinutes()-startTime.getMinutes()))/55;
-      // b: 实际上课的节数
-      var b = 0;
-      //
-      //var c = parseInt(a)-parseInt(b);
-      var c = parseInt(a);
-      return c;
-    } else{
-      // a: 应该上课的节数
-      var a = ((endTime.getHours()-startTime.getHours())*60 + (endTime.getMinutes()-startTime.getMinutes()))/55;
-      // b: 实际上课的节数
-      var b = 0;
-      //
-      //var c = parseInt(a)-parseInt(b);
-      var c = parseInt(a);
-      return c;
-    }
-  }
-//console.log(Ctnot(new Date("2015-11-3 14:20"), new Date("2015-11-3 17:05"), new Date("2015-11-3 14:30"), new Date("2015-11-3 17:05")));
-//
   var beginDay = new Date("2015-11-3");
   var now = new Date();
-  SignIn.find({StudentId: req.query.StudentId, BeginSubjectDate: {$gte: beginDay}, EndSubjectDate: {$lte: now}, SecondSignInState: 1, FirstSignInState: -1, IsVacation: 0})
+
+  SignIn.find({StudentId: req.query.StudentId, BeginSubjectDate: {$gte: beginDay}, EndSubjectDate: {$lte: new Date()}, Ctnot: {$gte: 0}})
       .populate('StudentId')
       .exec(function(err,signs){
         var array = [];
@@ -1778,14 +1668,14 @@ router.get('/StudentViewCtnot', function(req,res,next){
               //
               if(arr.StudentId.toString() == item.StudentId._id.toString()){
                 //
-                arr.Ctnot = parseInt(arr.Ctnot)+parseInt(Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime))
+                arr.Ctnot = parseInt(arr.Ctnot) + parseInt(item.Ctnot)
               } else{
                 //
                 array.push({
                   StudentId: item.StudentId._id,
                   StudentName: item.StudentId.StudentName,
                   Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
-                  Ctnot: Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime),
+                  Ctnot: item.Ctnot,
                   SubjectName: item.SubjectName,
                   BeginSubjectDate: item.BeginSubjectDate,
                   EndSubjectDate: item.EndSubjectDate
@@ -1797,16 +1687,56 @@ router.get('/StudentViewCtnot', function(req,res,next){
               StudentId: item.StudentId._id,
               StudentName: item.StudentId.StudentName,
               Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
-              Ctnot: Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime),
+              Ctnot: item.Ctnot,
               SubjectName: item.SubjectName,
               BeginSubjectDate: item.BeginSubjectDate,
               EndSubjectDate: item.EndSubjectDate
             })
           }
         });
-        console.log(array);
         res.json(array);
       });
+
+  //SignIn.find({StudentId: req.query.StudentId, BeginSubjectDate: {$gte: beginDay}, EndSubjectDate: {$lte: now}, SecondSignInState: 1, FirstSignInState: -1, IsVacation: 0})
+  //    .populate('StudentId')
+  //    .exec(function(err,signs){
+  //      var array = [];
+  //      signs.forEach(function(item, callback){
+  //        //
+  //        if(array.length != 0){
+  //          array.forEach(function(arr, callback){
+  //            //
+  //            if(arr.StudentId.toString() == item.StudentId._id.toString()){
+  //              //
+  //              arr.Ctnot = parseInt(arr.Ctnot)+parseInt(Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime))
+  //            } else{
+  //              //
+  //              array.push({
+  //                StudentId: item.StudentId._id,
+  //                StudentName: item.StudentId.StudentName,
+  //                Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
+  //                Ctnot: Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime),
+  //                SubjectName: item.SubjectName,
+  //                BeginSubjectDate: item.BeginSubjectDate,
+  //                EndSubjectDate: item.EndSubjectDate
+  //              })
+  //            }
+  //          });
+  //        } else{
+  //          array.push({
+  //            StudentId: item.StudentId._id,
+  //            StudentName: item.StudentId.StudentName,
+  //            Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
+  //            Ctnot: Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime),
+  //            SubjectName: item.SubjectName,
+  //            BeginSubjectDate: item.BeginSubjectDate,
+  //            EndSubjectDate: item.EndSubjectDate
+  //          })
+  //        }
+  //      });
+  //      console.log(array);
+  //      res.json(array);
+  //    });
 });
 
 router.get('/getSignInfor', function(req,res,next){
@@ -1940,6 +1870,79 @@ router.get('/CheackIfSign', function(req,res,next){
     }
   });
 });
+
+
+
+
+function Ctnot(startTime,endTime,signInTime,signOutTime){
+  //
+  if(startTime && endTime && signInTime && signOutTime){
+    if(((signInTime.getHours()-startTime.getHours())*60 + (signInTime.getMinutes()-startTime.getMinutes())) <= 25){
+      c = -1;
+      return c;
+    } else{
+      // a: 应该上课的节数
+      var a = ((endTime.getHours()-startTime.getHours())*60 + (endTime.getMinutes()-startTime.getMinutes()))/55;
+      // b: 实际上课的节数
+      var b = ((signOutTime.getHours()-signInTime.getHours())*60 + (signOutTime.getMinutes()-signInTime.getMinutes()))/55;
+      //
+      //var c = parseInt(a)-parseInt(b);
+      var c = (1-Math.round(b)/parseInt(a))*parseInt(a);
+      return c;
+    }
+  } else if(startTime && endTime && signInTime){
+    // a: 应该上课的节数
+    var a = ((endTime.getHours()-startTime.getHours())*60 + (endTime.getMinutes()-startTime.getMinutes()))/55;
+    // b: 实际上课的节数
+    var b = 0;
+    //
+    //var c = parseInt(a)-parseInt(b);
+    var c = parseInt(a);
+    return c;
+  } else if(startTime && endTime && signOutTime){
+    // a: 应该上课的节数
+    var a = ((endTime.getHours()-startTime.getHours())*60 + (endTime.getMinutes()-startTime.getMinutes()))/55;
+    // b: 实际上课的节数
+    var b = 0;
+    //
+    //var c = parseInt(a)-parseInt(b);
+    var c = parseInt(a);
+    return c;
+  } else{
+    // a: 应该上课的节数
+    var a = ((endTime.getHours()-startTime.getHours())*60 + (endTime.getMinutes()-startTime.getMinutes()))/55;
+    // b: 实际上课的节数
+    var b = 0;
+    //
+    //var c = parseInt(a)-parseInt(b);
+    var c = parseInt(a);
+    return c;
+  }
+}
+
+var rule5 = new schedule.RecurrenceRule();
+
+rule5.hour = 10;
+rule5.minute = 52;
+
+var j5 = schedule.scheduleJob(rule5, function(){
+  //
+  var today_Begin = new Date();
+  today_Begin.setHours(7,00,00);
+  var today_End = new Date();
+  today_End.setHours(23,00,00);
+  //
+  SignIn.find({BeginSubjectDate: {$gte: today_Begin}, EndSubjectDate: {$lte: today_End}, Ctnot: 0}, function(err, signs){
+    //
+    signs.forEach(function(item){
+      item.Ctnot = Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime);
+      //console.log(Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime));
+      item.save();
+    })
+  });
+});
+
+
 
 module.exports = router;
 
