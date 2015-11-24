@@ -175,26 +175,7 @@ router.get('/login',function(req,res,next){
       if(err){next(err)}
       else{
         if(doc){
-res.json(doc);
-          //
-//          if(doc.DeviceId){
-            //
-  //          if(doc.DeviceId == req.query.DeviceId){
-    //          res.json(doc);
-      //      } else{
-        //      res.send('设备不正确');
-          //  }
-     //     } else{
-            //
-       //     Student.findOneAndUpdate({_id: doc._id}, {DeviceId: req.query.DeviceId}, function(err,stu){
-         //     if(err){
-          //      console.error(err);
-           //   } else{
-             //   console.log(stu);
-              //  res.json(doc);
-            //  }
-         //   });
-       //   }
+          res.json(doc);
         } else{
           res.send('请输入正确的信息');
         }
@@ -623,25 +604,47 @@ router.get('/getpoint',function(req,res,next){
   date = new Date(date);
   console.log(date);
   console.log(typeof date);
-  SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}}, function(err, signs){
-    if(err){
-      next(err);
-    } else{
-      if(signs){
-        Address.findOne({AddressName: signs.AddressName}, function(err, address){
-          if(err){
-            next(err);
-          } else{
-            if(address){
-              res.json(address);
-            }
-          }
-        });
+  if(req.query.tag == "ClassRoom"){
+    SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}}, function(err, signs){
+      if(err){
+        next(err);
       } else{
-        res.send('没课');
+        if(signs){
+          Address.findOne({AddressName: signs.AddressName, ClassRoomName: signs.ClassRoomName}, function(err, address){
+            if(err){
+              next(err);
+            } else{
+              if(address){
+                res.json(address);
+              }
+            }
+          });
+        } else{
+          res.send('没课');
+        }
       }
-    }
-  });
+    });
+  } else{
+    SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}}, function(err, signs){
+      if(err){
+        next(err);
+      } else{
+        if(signs){
+          Address.findOne({AddressName: signs.AddressName}, function(err, address){
+            if(err){
+              next(err);
+            } else{
+              if(address){
+                res.json(address);
+              }
+            }
+          });
+        } else{
+          res.send('没课');
+        }
+      }
+    });
+  }
   //var MyAddress = JSON.parse(req.query.MyAddress);
   //console.log(MyAddress);
   //Address.find({},function(err,doc){

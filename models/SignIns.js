@@ -14,6 +14,7 @@ var SignInSchema = new mongoose.Schema({
     BeginSubjectDate: Date, // 起始时间
     EndSubjectDate: Date, // 结束时间
     AddressName: String, // 教学楼
+    ClassRoomName: String, // 教室名
 
     SignInDate: Date, // 签到时间
     SignInAddress: {lat: Number,lng: Number}, // 签到的位置

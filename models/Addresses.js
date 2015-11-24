@@ -7,9 +7,11 @@ var mongoose = require('mongoose');
 
 var AddressSchema = new mongoose.Schema({
     //
-    AddressName: String,//地理名字
+    AddressName: String, //教学楼名字
+    ClassRoomName: String, // 教室名字
     Address: {lat: Number,lng: Number},//地理坐标
-    Scope: Number // 范围
+    Scope: Number, // 范围
+    tag: String
 });
 
 mongoose.model('Address', AddressSchema);
