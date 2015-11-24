@@ -605,25 +605,28 @@ router.get('/getpoint',function(req,res,next){
   console.log(date);
   console.log(typeof date);
   if(req.query.tag == "ClassRoom"){
-    SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}}, function(err, signs){
-      if(err){
-        next(err);
-      } else{
-        if(signs){
-          Address.findOne({AddressName: signs.AddressName, ClassRoomName: signs.ClassRoomName}, function(err, address){
-            if(err){
-              next(err);
+    SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}})
+        .populate('ClassId')
+        .exec(function(err, signs){
+          if(err){
+            next(err);
+          } else{
+            if(signs){
+              res.json(signs.ClassId);
+              //Address.findOne({AddressName: signs.AddressName, ClassRoomName: signs.ClassRoomName}, function(err, address){
+              //  if(err){
+              //    next(err);
+              //  } else{
+              //    if(address){
+              //      res.json(address);
+              //    }
+              //  }
+              //});
             } else{
-              if(address){
-                res.json(address);
-              }
+              res.send('没课');
             }
-          });
-        } else{
-          res.send('没课');
-        }
-      }
-    });
+          }
+        });
   } else{
     SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}}, function(err, signs){
       if(err){

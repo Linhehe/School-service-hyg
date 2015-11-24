@@ -7,7 +7,8 @@ var ClassSchema = mongoose.Schema(
         Students: [{type: mongoose.Schema.Types.ObjectId, ref: 'Student'}],//班级嵌套学生
         ssid: String,
         bssid: String,
-        frequency: Number
+        frequency: Number,
+        tag: String
     });
 
 mongoose.model('Class', ClassSchema);
