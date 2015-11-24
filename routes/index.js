@@ -1827,8 +1827,10 @@ router.post('/SignOut', function(req,res,next){
     return result;
   }
   var date = Date.parse(req.body.date);
-  date = new Date(date);
-  SignIn.findOne({StudentId: req.body.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}}, function(err, signs){
+  var date_Begin = new Date(date);
+  var date_End = new Date(date);
+
+  SignIn.findOne({StudentId: req.body.StudentId, BeginSubjectDate: {$lte: date_Begin}, EndSubjectDate: {$gte: new Date(date_End.setMinutes(date_End.getMinutes()+10))}}, function(err, signs){
     if(err){
       next(err);
     } else{
@@ -1837,7 +1839,7 @@ router.post('/SignOut', function(req,res,next){
 //          if(CountSignOut(signs.EndSubjectDate,date)<=10){
 //            console.log('可以签退');
             signs.SecondSignInState = 1;
-            signs.SecondSignInTime = date;
+            signs.SecondSignInTime = date_Begin;
             signs.save();
             res.send('签退成功');
 //          } else{
