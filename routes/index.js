@@ -11,7 +11,7 @@ var client = JPush.buildClient('9a560a04b31b41c643b8445f', 'b1740488c70f66f5e3c7
 var mongoose = require('mongoose');
 
 //声明数据库链接
-mongoose.connect('mongodb://113.31.89.205:27017/school', function(err){
+mongoose.connect('mongodb://127.0.0.1:27017/school', function(err){
   console.log(err);
 });
 
