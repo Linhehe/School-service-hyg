@@ -1796,7 +1796,9 @@ router.post('/SignIn', function(req,res,next){
   }
   var date = Date.parse(req.body.date);
   date = new Date(date);
-  SignIn.findOne({StudentId: req.body.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}}, function(err, signs){
+  var date_Begin = date;
+  var date_End = date;
+  SignIn.findOne({StudentId: req.body.StudentId, BeginSubjectDate: {$lte: new Date(date_Begin1.setMinutes(date_Begin1.getMinutes()+5))}, EndSubjectDate: {$gte: new Date(date_End1.setMinutes(date_End1.getMinutes()-15))}}, function(err, signs){
     if(err){
       next(err);
     } else{
@@ -1842,7 +1844,7 @@ router.post('/SignOut', function(req,res,next){
   var date_Begin = new Date(date);
   var date_End = new Date(date);
 
-  SignIn.findOne({StudentId: req.body.StudentId, BeginSubjectDate: {$lte: date_Begin}, EndSubjectDate: {$gte: new Date(date_End.setMinutes(date_End.getMinutes()+10))}}, function(err, signs){
+  SignIn.findOne({StudentId: req.body.StudentId, BeginSubjectDate: {$lte: new Date(date_Begin1.setMinutes(date_Begin1.getMinutes()+5))}, EndSubjectDate: {$gte: new Date(date_End1.setMinutes(date_End1.getMinutes()-15))}}, function(err, signs){
     if(err){
       next(err);
     } else{
@@ -1956,6 +1958,17 @@ var j5 = schedule.scheduleJob(rule5, function(){
   });
 });
 
+//var date = new Date('2015-10-12 9:55');
+//var date_Begin1 = date;
+//var date_End1 = date;
+//
+//SignIn.findOne({StudentId: '5655aa890661e538270b3eab', BeginSubjectDate: {$lte: new Date(date_Begin1.setMinutes(date_Begin1.getMinutes()+5))}, EndSubjectDate: {$gte: new Date(date_End1.setMinutes(date_End1.getMinutes()-15))}}, function(err, signs){
+//  if(err){
+//    next(err);
+//  } else{
+//    console.log(signs);
+//  }
+//});
 
 
 module.exports = router;
