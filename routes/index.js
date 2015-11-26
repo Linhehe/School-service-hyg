@@ -1970,6 +1970,16 @@ var j5 = schedule.scheduleJob(rule5, function(){
 //  }
 //});
 
+// 课程表
+//var kcb = xlsx.parse('public/files/kcb.xls');
+//var i = 0;
+//while(i<kcb.length){
+//  console.log('name = ' + kcb[i].name + '; i = '+ i + ' ; data = ' + kcb[i].data[0]);
+//  var excel = new Excel({ClassName: kcb[i].name, Number: i});
+//  excel.save();
+//  i++;
+//}
+
 
 module.exports = router;
 
