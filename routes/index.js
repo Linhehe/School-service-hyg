@@ -58,6 +58,8 @@ var testSignIn = mongoose.model('testSignIn');
 
 var obj = xlsx.parse('public/files/kcb.xls');
 
+var httpAddress = 'http://113.31.89.205:4343/images/';
+
 //var i = 0;
 //while(i<obj.length){
 //  console.log('name = ' + obj[i].name + '; i = '+ i + 'data = ' + obj[i].data[0]);
@@ -209,7 +211,7 @@ router.get('/myclass',function(req,res,next){
         else{
           console.log(doc.Students.length)
           for(i=0;i<doc.Students.length;i++) {
-            doc.Students[i].Photo = 'http://huyugui.eicp.net:4343/images/'+doc.Students[i].Photo;
+            doc.Students[i].Photo = httpAddress+doc.Students[i].Photo;
           }
           res.json(doc.Students);
         }
@@ -221,7 +223,7 @@ router.get('/myclass_infor',function(req,res,next){
   Student.findOne({_id:req.query.id},function(err,doc){
     if(err){next(err)}
     else{
-      doc.Photo = 'http://huyugui.eicp.net:4343/images/'+doc.Photo
+      doc.Photo = httpAddress+doc.Photo
       res.json(doc)
     }
   })
@@ -233,7 +235,7 @@ router.get('/student_person',function(req,res,next){
     if(err!=null){next(err);}
     else{
       console.log(doc);
-      doc.Photo = 'http://huyugui.eicp.net:4343/images/'+doc.Photo;
+      doc.Photo = httpAddress+doc.Photo;
       res.json(doc)
     }
   })
@@ -748,7 +750,7 @@ router.get('/teacher_person',function(req,res,next){
     if(err!=null){next(err);}
     else{
       console.log(doc);
-      doc.Photo = 'http://huyugui.eicp.net:4343/images/'+doc.Photo
+      doc.Photo = httpAddress+doc.Photo
       res.json(doc)
     }
   })
@@ -898,7 +900,7 @@ router.get('/tea_student',function(req,res,next){
             if(err){next(err)}
             else{
                 for(i=0;i<doc.Students.length;i++) {
-                    doc.Students[i].Photo = 'http://huyugui.eicp.net:4343/images/'+doc.Students[i].Photo;
+                    doc.Students[i].Photo = httpAddress+doc.Students[i].Photo;
                 }
                 res.json(doc.Students);
             }
@@ -909,7 +911,7 @@ router.get('/tea_stu_preson',function(req,res,next){
     Student.findOne({_id:req.query.StudentId},function(err,doc){
         if(err){next(err)}
         else{
-          doc.Photo = 'http://huyugui.eicp.net:4343/images/'+doc.Photo
+          doc.Photo = httpAddress+doc.Photo
           res.json(doc)
         }
     })
@@ -1594,7 +1596,7 @@ router.get('/getSignIn', function(req,res,next){
                 array.push({
                   StudentId: item.StudentId._id,
                   StudentName: item.StudentId.StudentName,
-                  Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
+                  Photo: httpAddress+ item.StudentId.Photo,
                   Ctnot: item.Ctnot,
                   SubjectName: item.SubjectName,
                   BeginSubjectDate: item.BeginSubjectDate,
@@ -1606,7 +1608,7 @@ router.get('/getSignIn', function(req,res,next){
             array.push({
               StudentId: item.StudentId._id,
               StudentName: item.StudentId.StudentName,
-              Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
+              Photo: httpAddress+ item.StudentId.Photo,
               Ctnot: item.Ctnot,
               SubjectName: item.SubjectName,
               BeginSubjectDate: item.BeginSubjectDate,
@@ -1633,7 +1635,7 @@ router.get('/getSignIn', function(req,res,next){
   //              array.push({
   //                StudentId: item.StudentId._id,
   //                StudentName: item.StudentId.StudentName,
-  //                Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
+  //                Photo: httpAddress+ item.StudentId.Photo,
   //                Ctnot: Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime),
   //                SubjectName: item.SubjectName,
   //                BeginSubjectDate: item.BeginSubjectDate,
@@ -1645,7 +1647,7 @@ router.get('/getSignIn', function(req,res,next){
   //          array.push({
   //            StudentId: item.StudentId._id,
   //            StudentName: item.StudentId.StudentName,
-  //            Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
+  //            Photo: httpAddress+ item.StudentId.Photo,
   //            Ctnot: Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime),
   //            SubjectName: item.SubjectName,
   //            BeginSubjectDate: item.BeginSubjectDate,
@@ -1680,7 +1682,7 @@ router.get('/StudentViewCtnot', function(req,res,next){
                 array.push({
                   StudentId: item.StudentId._id,
                   StudentName: item.StudentId.StudentName,
-                  Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
+                  Photo: httpAddress+ item.StudentId.Photo,
                   Ctnot: item.Ctnot,
                   SubjectName: item.SubjectName,
                   BeginSubjectDate: item.BeginSubjectDate,
@@ -1692,7 +1694,7 @@ router.get('/StudentViewCtnot', function(req,res,next){
             array.push({
               StudentId: item.StudentId._id,
               StudentName: item.StudentId.StudentName,
-              Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
+              Photo: httpAddress+ item.StudentId.Photo,
               Ctnot: item.Ctnot,
               SubjectName: item.SubjectName,
               BeginSubjectDate: item.BeginSubjectDate,
@@ -1720,7 +1722,7 @@ router.get('/StudentViewCtnot', function(req,res,next){
   //              array.push({
   //                StudentId: item.StudentId._id,
   //                StudentName: item.StudentId.StudentName,
-  //                Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
+  //                Photo: httpAddress+ item.StudentId.Photo,
   //                Ctnot: Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime),
   //                SubjectName: item.SubjectName,
   //                BeginSubjectDate: item.BeginSubjectDate,
@@ -1732,7 +1734,7 @@ router.get('/StudentViewCtnot', function(req,res,next){
   //          array.push({
   //            StudentId: item.StudentId._id,
   //            StudentName: item.StudentId.StudentName,
-  //            Photo: 'http://huyugui.eicp.net:4343/images/'+ item.StudentId.Photo,
+  //            Photo: httpAddress+ item.StudentId.Photo,
   //            Ctnot: Ctnot(item.BeginSubjectDate, item.EndSubjectDate, item.FirstSignInTime, item.SecondSignInTime),
   //            SubjectName: item.SubjectName,
   //            BeginSubjectDate: item.BeginSubjectDate,
