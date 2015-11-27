@@ -1799,8 +1799,8 @@ router.post('/SignIn', function(req,res,next){
   //var date = Date.parse(req.body.date);
   //date = new Date(date);
   var date = new Date();
-  var date_Begin = date;
-  var date_End = date;
+  var date_Begin1 = new Date();
+  var date_End1 = new Date();
   SignIn.findOne({StudentId: req.body.StudentId, BeginSubjectDate: {$lte: new Date(date_Begin1.setMinutes(date_Begin1.getMinutes()+5))}, EndSubjectDate: {$gte: new Date(date_End1.setMinutes(date_End1.getMinutes()-15))}}, function(err, signs){
     if(err){
       next(err);
@@ -1845,8 +1845,8 @@ router.post('/SignOut', function(req,res,next){
   }
   //var date = Date.parse(req.body.date);
   var date = new Date();
-  var date_Begin = new Date(date);
-  var date_End = new Date(date);
+  var date_Begin1 = new Date();
+  var date_End1 = new Date();
 
   SignIn.findOne({StudentId: req.body.StudentId, BeginSubjectDate: {$lte: new Date(date_Begin1.setMinutes(date_Begin1.getMinutes()+5))}, EndSubjectDate: {$gte: new Date(date_End1.setMinutes(date_End1.getMinutes()-15))}}, function(err, signs){
     if(err){
@@ -1857,7 +1857,7 @@ router.post('/SignOut', function(req,res,next){
 //          if(CountSignOut(signs.EndSubjectDate,date)<=10){
 //            console.log('可以签退');
             signs.SecondSignInState = 1;
-            signs.SecondSignInTime = date_Begin;
+            signs.SecondSignInTime = date;
             signs.save();
             res.send('签退成功');
 //          } else{
