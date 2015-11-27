@@ -385,8 +385,8 @@ router.post('/removeDeviceId', function(req,res,next){
 
 //学生端、获取班级课程名称
 router.get('/getSubject',function(req,res,next){
-  var date = Date.parse(req.query.date);
-  var newDate = new Date(date);
+  //var date = Date.parse(req.query.date);
+  var newDate = new Date();
 
   SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: newDate}, EndSubjectDate: {$gte: newDate}}, function (err, doc) {
     if(err){next(err)}
@@ -476,8 +476,8 @@ router.get('/get_wifi', function(req,res,next){
 
 //学生端，班委帮忙签到确定
 router.post('/help_sign',function(req,res,next){
-  var date = Date.parse(req.body.date);
-  var newDate = new Date(date);
+  //var date = Date.parse(req.body.date);
+  var newDate = new Date();
 
   SignIn.findOne({StudentId: req.body.StudentId, BeginSubjectDate: {$lte: newDate}, EndSubjectDate: {$gte: newDate}}, function (err, signs) {
     if (err) {
@@ -555,8 +555,8 @@ router.post('/change_wifi',function(req,res,next){
 router.post('/test', function (req,res,next){
   //
   //console.log(req.body);
-  var date = Date.parse(req.body.date);
-  var newDate = new Date(date);
+  //var date = Date.parse(req.body.date);
+  var newDate = new Date();
   //console.log(typeof newDate);
   //console.log(newDate);
   //
@@ -604,12 +604,14 @@ router.post('/test', function (req,res,next){
 //ios、学生签到获取教学区
 //学生端、签到定位
 router.get('/getpoint',function(req,res,next){
-  var date = Date.parse(req.query.date);
+  //var date = Date.parse(req.query.date);
+  //console.log(date);
+  //console.log(typeof date);
+  //date = new Date(date);
+  //console.log(date);
+  //console.log(typeof date);
+  var date = new Date();
   console.log(date);
-  console.log(typeof date);
-  date = new Date(date);
-  console.log(date);
-  console.log(typeof date);
   if(req.query.tag == "ClassRoom"){
     SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}})
         .populate('ClassId')
@@ -682,8 +684,8 @@ router.get('/getpoint',function(req,res,next){
 
 //ios学生确定签到
 router.post('/ios_test', function (req, res, next) {
-  var date = Date.parse(req.body.date);
-  var newDate = new Date(date);
+  //var date = Date.parse(req.body.date);
+  var newDate = new Date();
 
   SignIn.findOne({StudentId: req.body.StudentId, BeginSubjectDate: {$lte: newDate}, EndSubjectDate: {$gte: newDate}}, function (err, signs) {
     if (err) {
@@ -1794,8 +1796,9 @@ router.post('/SignIn', function(req,res,next){
     var result = (signinTime.getHours()-startTime.getHours())*60 + (signinTime.getMinutes()-startTime.getMinutes());
     return result;
   }
-  var date = Date.parse(req.body.date);
-  date = new Date(date);
+  //var date = Date.parse(req.body.date);
+  //date = new Date(date);
+  var date = new Date();
   var date_Begin = date;
   var date_End = date;
   SignIn.findOne({StudentId: req.body.StudentId, BeginSubjectDate: {$lte: new Date(date_Begin1.setMinutes(date_Begin1.getMinutes()+5))}, EndSubjectDate: {$gte: new Date(date_End1.setMinutes(date_End1.getMinutes()-15))}}, function(err, signs){
@@ -1840,7 +1843,8 @@ router.post('/SignOut', function(req,res,next){
     var result = (endTime.getHours()-signinTime.getHours())*60 + (endTime.getMinutes()-signinTime.getMinutes());
     return result;
   }
-  var date = Date.parse(req.body.date);
+  //var date = Date.parse(req.body.date);
+  var date = new Date();
   var date_Begin = new Date(date);
   var date_End = new Date(date);
 
@@ -1871,8 +1875,9 @@ router.post('/SignOut', function(req,res,next){
 
 // 查看是否有课
 router.get('/CheackIfSign', function(req,res,next){
-  var date = Date.parse(req.query.date);
-  date = new Date(date);
+  //var date = Date.parse(req.query.date);
+  //date = new Date(date);
+  var date = new Date();
   SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}}, function(err, signs){
     if(err){
       next(err);
