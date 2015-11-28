@@ -1985,6 +1985,28 @@ var j5 = schedule.scheduleJob(rule5, function(){
 //  i++;
 //}
 
+// 学委查看考勤状况
+router.get('/SignInState', function(req,res,next){
+  //
+  SignIn.find({ClassId: '56559e535234c69804a2531b', BeginSubjectDate: {$lte: new Date("2015-11-27 17:00")}, EndSubjectDate: {$gte: new Date("2015-11-27 17:00")}})
+      .populate('StudentId')
+      .exec(function(err, signs){
+        if(err){
+          next(err);
+        } else{
+          if(signs){
+            var array = [];
+            signs.forEach(function(item){
+              array.push({StudentName: item.StudentId.StudentName, FirstSignInState: item.FirstSignInState, SecondSignInState: item.SecondSignInState});
+            });
+            res.json(array);
+          } else{
+            res.send('没课');
+          }
+        }
+      });
+});
+
 
 module.exports = router;
 
