@@ -1988,7 +1988,7 @@ var j5 = schedule.scheduleJob(rule5, function(){
 // 学委查看考勤状况
 router.get('/SignInState', function(req,res,next){
   //
-  SignIn.find({ClassId: '56559e535234c69804a2531b', BeginSubjectDate: {$lte: new Date("2015-11-27 17:00")}, EndSubjectDate: {$gte: new Date("2015-11-27 17:00")}})
+  SignIn.find({ClassId: req.query.ClassId, BeginSubjectDate: {$lte: new Date()}, EndSubjectDate: {$gte: new Date()}})
       .populate('StudentId')
       .exec(function(err, signs){
         if(err){
