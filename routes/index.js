@@ -28,7 +28,7 @@ var pushOptionAndroid = {
 var mongoose = require('mongoose');
 
 //声明数据库链接
-mongoose.connect('mongodb://linhehe:hyg&1qaz2wSX@113.31.89.205:27017/school', function(err){
+mongoose.connect('mongodb://linhehe:linhehe@113.31.89.205:27017/test', function(err){
   if(err){
     console.error(err);
   } else{
@@ -967,59 +967,54 @@ router.post('/vacation', function(req,res,next){
     Reason: req.body.Reason,
     VacationTime: new Date(req.body.VacationTime)
   });
-  // *******
-  var client = BaiduPush.createClient(pushOptionIos);
-  var option = {
-    push_type: 2,
-    tag: "0110140105",
-    device_type: 4,
-    messages: {"aps":{"alert":"test"}},
-    deploy_status: 1,
-    message_type: 1
-  };
-  client.pushMsg(option, function(error, result) {
-    var j=2;
-    console.log(JSON.stringify(result));
-    res.send(JSON.stringify(result));
-  });
 
   //{"request_id":1656472935,"response_params":{"success_amount":1,"resource_ids":["msgid#8622333945414970548"]}
   //{"request_id":430228101,"response_params":{"success_amount":1,"resource_ids":["msgid#5545290654518020164"]}
 
-  //Student.findOne({_id: req.body.Student}, function(err,stu){
-  //  if(err){
-  //    next(err);
-  //  } else{
-  //    if(stu){
-  //      if(stu.Device == "Android"){
-  //        var client = BaiduPush.createClient(pushOptionAndroid);
-  //        var option = {
-  //          push_type: 2,
-  //          tag: stu.Number,
-  //          msg_keys:"testkey",
-  //          device_type:3,
-  //          messages:{"title":"请假申请","description":"你的申请已提交，请耐心等待老师审批。"},
-  //          deploy_status:1,
-  //          message_type:1
-  //        };
-  //        client.pushMsg(option, function(error, result) {
-  //          if(error){
-  //            res.send('服务器错误');
-  //          } else{
-  //            if(result == ''){
-  //              vacation.save();
-  //              res.send('提交成功');
-  //            } else{
-  //              res.send('提交失败，请重试');
-  //            }
-  //          }
-  //        });
-  //      }
-  //    } else{
-  //      res.send('error');
-  //    }
-  //  }
-  //});
+  Student.findOne({_id: req.body.Student}, function(err,stu){
+    if(err){
+      next(err);
+    } else{
+      if(stu){
+        if(stu.Device == "Android"){
+          var client = BaiduPush.createClient(pushOptionAndroid);
+          var option = {
+            push_type: 2,
+            tag: stu.ClassTeacher,
+            msg_keys: "testkey",
+            device_type: 3,
+            messages: {"title":"请假申请","description":"您有1条新的请假申请"},
+            deploy_status: 1,
+            message_type: 1
+          };
+        } else{
+          var client = BaiduPush.createClient(pushOptionIos);
+          var option = {
+            push_type: 2,
+            tag: stu.ClassTeacher,
+            device_type: 4,
+            messages: {"aps":{"alert":"您有1条新的请假申请"}},
+            deploy_status: 1,
+            message_type: 1
+          };
+        }
+        client.pushMsg(option, function(error, result) {
+          if(error){
+            res.send('服务器错误');
+          } else{
+            if(result.response_params.success_amount == 1){
+              vacation.save();
+              res.send('提交成功');
+            } else{
+              res.send('提交失败，请重试');
+            }
+          }
+        });
+      } else{
+        res.send('error');
+      }
+    }
+  });
 
   //vacation.save(function(err,doc){
   //  if(err){
@@ -1095,35 +1090,88 @@ router.put('/verify', function(req,res,next){
     }
   });
   //
-  Vacation.findOneAndUpdate({
-    //
-    _id: req.body._id
-  }, {
-    //
-    Status: req.body.Status
-  }, function(err,doc){
-    //
+  Vacation.findOne({_id: req.body._id}, function(err,vacation){
     if(err){
       next(err);
     } else{
-      res.json(doc);
-      console.log('**********')
-      console.log(doc.Student)
-      console.log(doc.Student.toString())
-      client.push().setPlatform('ios', 'android')
-          .setAudience(JPush.alias(doc.Student.toString()))
-          .setNotification("您的请假审核有结果了", JPush.ios("您的请假审核有结果了", "APP提示"), JPush.android("您的请假审核有结果了", "APP提示", 2))
-          .setOptions(null, 60)
-          .send(function(err, res) {
-            if (err) {
-              console.log(err.message);
-            } else {
-              console.log('Sendno: ' + res.sendno);
-              console.log('Msg_id: ' + res.msg_id);
+      if(vacation){
+        Teacher.findOne({_id: req.body.TeacherId}, function(err,teacher){
+          if(err){
+            next(err);
+          } else{
+            if(teacher){
+              if(teacher.Device == 'Android'){
+                var client = BaiduPush.createClient(pushOptionAndroid);
+                var option = {
+                  push_type: 2,
+                  tag: vacation.Student,
+                  msg_keys:"testkey",
+                  device_type:3,
+                  messages:{"title":"审核结果通知","description":"你的请假已审批，请查看"},
+                  deploy_status:1,
+                  message_type:1
+                }
+              } else{
+                var client = BaiduPush.createClient(pushOptionIos);
+                var option = {
+                  push_type: 2,
+                  tag: vacation.Student,
+                  device_type:4,
+                  messages: {"aps":{"alert":"你的请假已审批，请查看"}},
+                  deploy_status:1,
+                  message_type:1
+                }
+              }
+              client.pushMsg(option, function(error, result) {
+                if(error){
+                  res.send('信息推送服务器错误');
+                } else{
+                  if(result.response_params.success_amount == 1){
+                    vacation.Status = req.body.Status;
+                    vacation.save();
+                    res.send('推送成功');
+                  } else{
+                    res.send('推送失败，请重试');
+                  }
+                }
+              });
+            } else{
+              res.send('error');
             }
-          });
+          }
+        });
+      }
     }
   });
+  //Vacation.findOneAndUpdate({
+  //  //
+  //  _id: req.body._id
+  //}, {
+  //  //
+  //  Status: req.body.Status
+  //}, function(err,doc){
+  //  //
+  //  if(err){
+  //    next(err);
+  //  } else{
+  //    res.json(doc);
+  //    //console.log('**********')
+  //    //console.log(doc.Student)
+  //    //console.log(doc.Student.toString())
+  //    //client.push().setPlatform('ios', 'android')
+  //    //    .setAudience(JPush.alias(doc.Student.toString()))
+  //    //    .setNotification("您的请假审核有结果了", JPush.ios("您的请假审核有结果了", "APP提示"), JPush.android("您的请假审核有结果了", "APP提示", 2))
+  //    //    .setOptions(null, 60)
+  //    //    .send(function(err, res) {
+  //    //      if (err) {
+  //    //        console.log(err.message);
+  //    //      } else {
+  //    //        console.log('Sendno: ' + res.sendno);
+  //    //        console.log('Msg_id: ' + res.msg_id);
+  //    //      }
+  //    //    });
+  //  }
+  //});
 });
 // *学生查看申请结果*
 router.get('/viewResults', function(req,res,next){
@@ -1454,9 +1502,6 @@ router.get('/GetInformation', function(req,res,next){
 router.post('/SendMessage', function(req,res,next){
   //
   var date = new Date();
-  console.log('=================');
-  console.log(req.body);
-  console.log('=================');
   if(req.body.ClassId == '全院'){
     //
     client.push().setPlatform('ios', 'android')
@@ -2123,6 +2168,21 @@ router.get('/SignInState', function(req,res,next){
 //SignIn.findOne({_id:'565bb66683d07263a21c741f'}, function(err,signs){
 //  console.log(signs);
 //});
+
+
+router.get('/addMessage_test', function(req,res,next){
+  var message = new Message({
+    "Title" : "来自开发者的问候",
+    "Content" : "欢迎使用考勤助手",
+    "MessageDate" : new Date(),
+    "Teacher" : "55ed546d5ef0f1be065579ce",
+    "College" : "55ed4e76c5e8329906b14051",
+    "Profession" : "55ed4e13d7d3839606a084a2",
+    "Class" : "55ed4d83100c389106ad7874"
+  });
+  message.save();
+  res.send('success');
+});
 
 
   module.exports = router;

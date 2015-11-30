@@ -28,6 +28,10 @@ var StudentSchema = new mongoose.Schema({
     DeviceId: String,
     WiFiSSID:String,
 
+    MotherPhone: String,
+    FatherPhone: String,
+    ClassTeacher: {type: mongoose.Schema.Types.ObjectId, ref: 'Teacher'},
+
     Device: String
 });
 

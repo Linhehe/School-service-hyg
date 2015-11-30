@@ -15,7 +15,9 @@ var TeacherSchema = new mongoose.Schema({
     QQ:String,      //QQ
     Email:String,
 
-    Classes: [{type: mongoose.Schema.Types.ObjectId, ref: 'Class'}]
+    Classes: [{type: mongoose.Schema.Types.ObjectId, ref: 'Class'}],
+
+    Device: String
 });
 
 mongoose.model('Teacher', TeacherSchema);
