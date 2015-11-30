@@ -1878,7 +1878,7 @@ router.get('/CheackIfSign', function(req,res,next){
   //var date = Date.parse(req.query.date);
   //date = new Date(date);
   var date = new Date();
-  SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}}, function(err, signs){
+  SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: new Date(date.setMinutes(date.getMinutes()+5))}, EndSubjectDate: {$gte: new Date(date.setMinutes(date.getMinutes()-15))}}, function(err, signs){
     if(err){
       next(err);
     } else{
@@ -2012,8 +2012,46 @@ router.get('/SignInState', function(req,res,next){
       });
 });
 
+//var date = new Date('2015-11-30 12:01');
+//SignIn.findOne({StudentId: '55ed4a8a7564496706c98204', BeginSubjectDate: {$lte: new Date(date.setMinutes(date.getMinutes()+5))}, EndSubjectDate: {$gte: new Date(date.setMinutes(date.getMinutes()-15))}}, function(err, signs) {
+//  console.log(signs);
+//});
 
-module.exports = router;
+//"_id" : ObjectId("5603a430065c87e7060865da"),
+//    "Purview" : 5,
+//    "StudentName" : "唐纯玲",
+//    "Number" : "0104140247",
+//    "Password" : "123",
+//    "Classes" : ObjectId("5603a41956494f239c9f8937"),
+//    "__v" : 0,
+//    "Professions" : ObjectId("56000c0f56494f237ca9a98d"),
+//    "Colleges" : ObjectId("55ed4e76c5e8329906b14051"),
+//    "DeviceId" : "",
+//    "IsSignIn" : 0,
+//    "WiFiSSID" : "0",
+//    "FatherPhone" : "",
+//    "MotherPhone" : "",
+//    "Photo" : "0104140247.jpg"
+//
+//"StudentId" : ObjectId("5603a430065c87e7060865da"),
+//    "ClassId" : ObjectId("5603a41956494f239c9f8937"),
+//    "TeacherName" : "钟丽萍",
+//    "SubjectName" : "Photoshop图像处理",
+//    "BeginSubjectDate" : ISODate("2015-12-15T00:00:00.000Z"),
+//    "EndSubjectDate" : ISODate("2015-12-15T03:50:00.000Z"),
+//    "AddressName" : "S1",
+//    "ClassRoomName" : "503",
+//    "FirstSignInState" : 0,
+//    "SecondSignInState" : 0,
+//    "Ctnot" : 0,
+//    "__v" : 0
+
+//SignIn.findOne({_id:'565bb66683d07263a21c741f'}, function(err,signs){
+//  console.log(signs);
+//});
+
+
+  module.exports = router;
 
 //1161,1990
 

@@ -27,8 +27,8 @@
       <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.85549134">
-              <caret line="2016" column="0" selection-start-line="2016" selection-start-column="0" selection-end-line="2016" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.5953757">
+              <caret line="2018" column="0" selection-start-line="2018" selection-start-column="0" selection-end-line="2018" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -170,8 +170,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -238,6 +236,8 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -766,14 +766,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-0.54991245">
           <caret line="176" column="18" selection-start-line="176" selection-start-column="18" selection-end-line="176" selection-end-column="18" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.85549134">
-          <caret line="2016" column="0" selection-start-line="2016" selection-start-column="0" selection-end-line="2016" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.5953757">
+          <caret line="2018" column="0" selection-start-line="2018" selection-start-column="0" selection-end-line="2018" selection-end-column="0" />
           <folding />
         </state>
       </provider>
