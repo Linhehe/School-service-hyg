@@ -7,6 +7,23 @@ var xlsx = require('node-xlsx');
 var JPush = require("jpush-sdk/lib/JPush/JPush.js");
 var client = JPush.buildClient('9a560a04b31b41c643b8445f', 'b1740488c70f66f5e3c70049');
 
+// 百度推送
+var BaiduPush   = require('baidu-push');
+// iOS
+var pushOptionIos = {
+  apiKey: 'Cah0L02R0IjXVMTmdUfslgGp',
+  secretKey: 'fcHdCBk7GjfL2EkPLa2RwAbqg2EmsHKL'
+  // timeout: 2000, // optional - default is: 5000
+  // agent: false   // optional - default is: maxSockets = 20
+};
+//Android
+var pushOptionAndroid = {
+  apiKey: 'wxI0mtmoZz0EckGca0RTAGii',
+  secretKey: 'Lb1cOhuacPptmDRF8LBeFe7wOzpXoqZ0'
+  // timeout: 2000, // optional - default is: 5000
+  // agent: false   // optional - default is: maxSockets = 20
+};
+
 //声明数据库
 var mongoose = require('mongoose');
 
@@ -182,6 +199,8 @@ router.get('/login',function(req,res,next){
       else{
         if(doc){
           res.json(doc);
+          doc.Device = req.query.Device;
+          doc.save();
         } else{
           res.send('请输入正确的信息');
         }
@@ -948,26 +967,76 @@ router.post('/vacation', function(req,res,next){
     Reason: req.body.Reason,
     VacationTime: new Date(req.body.VacationTime)
   });
-  vacation.save(function(err,doc){
-    if(err){
-      //next(err);
-      console.error(err);
-    } else{
-      res.json(doc);
-      client.push().setPlatform('ios', 'android')
-          .setAudience(JPush.tag(req.body.ClassesId+'_3'))
-          .setNotification("有新的请假申请", JPush.ios("有新的请假申请", "APP提示"), JPush.android("有新的请假申请", "APP提示", 2))
-          .setOptions(null, 60)
-          .send(function(err, res) {
-            if (err) {
-              console.log(err.message);
-            } else {
-              console.log('Sendno: ' + res.sendno);
-              console.log('Msg_id: ' + res.msg_id);
-            }
-          });
-    }
+  // *******
+  var client = BaiduPush.createClient(pushOptionAndroid);
+  var option = {
+    push_type: 2,
+    tag: stu.Number,
+    msg_keys:"testkey",
+    device_type:3,
+    messages:{"title":"请假申请","description":"你的申请已提交，请耐心等待老师审批。"},
+    deploy_status:1,
+    message_type:1
+  };
+  client.pushMsg(option, function(error, result) {
+    var j=2;
+    console.log(JSON.stringify(result));
   });
+  //Student.findOne({_id: req.body.Student}, function(err,stu){
+  //  if(err){
+  //    next(err);
+  //  } else{
+  //    if(stu){
+  //      if(stu.Device == "Android"){
+  //        var client = BaiduPush.createClient(pushOptionAndroid);
+  //        var option = {
+  //          push_type: 2,
+  //          tag: stu.Number,
+  //          msg_keys:"testkey",
+  //          device_type:3,
+  //          messages:{"title":"请假申请","description":"你的申请已提交，请耐心等待老师审批。"},
+  //          deploy_status:1,
+  //          message_type:1
+  //        };
+  //        client.pushMsg(option, function(error, result) {
+  //          if(error){
+  //            res.send('服务器错误');
+  //          } else{
+  //            if(result == ''){
+  //              vacation.save();
+  //              res.send('提交成功');
+  //            } else{
+  //              res.send('提交失败，请重试');
+  //            }
+  //          }
+  //        });
+  //      }
+  //    } else{
+  //      res.send('error');
+  //    }
+  //  }
+  //});
+
+  //vacation.save(function(err,doc){
+  //  if(err){
+  //    //next(err);
+  //    console.error(err);
+  //  } else{
+  //    res.json(doc);
+  //    client.push().setPlatform('ios', 'android')
+  //        .setAudience(JPush.tag(req.body.ClassesId+'_3'))
+  //        .setNotification("有新的请假申请", JPush.ios("有新的请假申请", "APP提示"), JPush.android("有新的请假申请", "APP提示", 2))
+  //        .setOptions(null, 60)
+  //        .send(function(err, res) {
+  //          if (err) {
+  //            console.log(err.message);
+  //          } else {
+  //            console.log('Sendno: ' + res.sendno);
+  //            console.log('Msg_id: ' + res.msg_id);
+  //          }
+  //        });
+  //  }
+  //});
 });
 // *教师查看申请*
 router.get('/checkVacation', function(req,res,next){

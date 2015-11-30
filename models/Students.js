@@ -26,7 +26,9 @@ var StudentSchema = new mongoose.Schema({
     Sigins: [{type: mongoose.Schema.Types.ObjectId, ref: 'SignIn'}],
 
     DeviceId: String,
-    WiFiSSID:String
+    WiFiSSID:String,
+
+    Device: String
 });
 
 mongoose.model('Student', StudentSchema);
