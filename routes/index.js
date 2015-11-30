@@ -27,8 +27,9 @@ var pushOptionAndroid = {
 //声明数据库
 var mongoose = require('mongoose');
 
+// mongodb://linhehe:linhehe@113.31.89.205:27017/test
 //声明数据库链接
-mongoose.connect('mongodb://linhehe:linhehe@113.31.89.205:27017/test', function(err){
+mongoose.connect('mongodb://linhehe:hyg&1qaz2wSX@113.31.89.205:27017/school', function(err){
   if(err){
     console.error(err);
   } else{
@@ -2114,7 +2115,7 @@ router.get('/SignInState', function(req,res,next){
           next(err);
         } else{
           if(signs.length != 0){
-            console.log(signs);
+            //console.log(signs);
             var array = [];
             signs.forEach(function(item){
               //if(item.StudentId == null)
@@ -2185,7 +2186,28 @@ router.get('/addMessage_test', function(req,res,next){
 });
 
 
-  module.exports = router;
+//SignIn.aggregate(
+//    [
+//      {"$match":{"ClassId":mongoose.Types.ObjectId("56559e535234c69804a2531b")}},
+//      {"$group": { "_id": { ClassId: "$ClassId", BeginSubjectDate: "$BeginSubjectDate",EndSubjectDate: "$EndSubjectDate" } } }
+//    ]
+//).exec(function(err,result){
+//  if(err){
+//    console.error(err);
+//    return;
+//  }
+//  console.log(result);
+//});
+
+
+//SignIn.find({ClassId: '55ed4d83100c389106ad7874'}, function(err,signs){
+//  signs.forEach(function(item){
+//    item.remove();
+//  });
+//});
+
+
+module.exports = router;
 
 //1161,1990
 
