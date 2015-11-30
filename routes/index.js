@@ -1994,9 +1994,14 @@ router.get('/SignInState', function(req,res,next){
         if(err){
           next(err);
         } else{
-          if(signs){
+          if(signs.length != 0){
+            console.log(signs);
             var array = [];
             signs.forEach(function(item){
+              //if(item.StudentId == null)
+              //{
+              //  console.log(JSON.stringify(item));
+              //}
               array.push({StudentName: item.StudentId.StudentName, FirstSignInState: item.FirstSignInState, SecondSignInState: item.SecondSignInState});
             });
             res.json(array);
