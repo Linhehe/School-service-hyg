@@ -972,15 +972,20 @@ router.post('/vacation', function(req,res,next){
   var option = {
     push_type: 2,
     tag: "0110140105",
-      device_type:4,
+    device_type: 4,
     messages: {"aps":{"alert":"test"}},
-    deploy_status:1,
-    message_type:1
+    deploy_status: 1,
+    message_type: 1
   };
   client.pushMsg(option, function(error, result) {
     var j=2;
     console.log(JSON.stringify(result));
+    res.send(JSON.stringify(result));
   });
+
+  //{"request_id":1656472935,"response_params":{"success_amount":1,"resource_ids":["msgid#8622333945414970548"]}
+  //{"request_id":430228101,"response_params":{"success_amount":1,"resource_ids":["msgid#5545290654518020164"]}
+
   //Student.findOne({_id: req.body.Student}, function(err,stu){
   //  if(err){
   //    next(err);
