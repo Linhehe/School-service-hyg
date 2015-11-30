@@ -613,7 +613,7 @@ router.get('/getpoint',function(req,res,next){
   var date = new Date();
   console.log(date);
   if(req.query.tag == "ClassRoom"){
-    SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}})
+    SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: new Date(date.setMinutes(date.getMinutes()+5))}, EndSubjectDate: {$gte: new Date(date.setMinutes(date.getMinutes()-15))}})
         .populate('ClassId')
         .exec(function(err, signs){
           if(err){
@@ -636,7 +636,7 @@ router.get('/getpoint',function(req,res,next){
           }
         });
   } else{
-    SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: date}, EndSubjectDate: {$gte: date}}, function(err, signs){
+    SignIn.findOne({StudentId: req.query.StudentId, BeginSubjectDate: {$lte: new Date(date.setMinutes(date.getMinutes()+5))}, EndSubjectDate: {$gte: new Date(date.setMinutes(date.getMinutes()-15))}}, function(err, signs){
       if(err){
         next(err);
       } else{
@@ -1988,7 +1988,8 @@ var j5 = schedule.scheduleJob(rule5, function(){
 // 学委查看考勤状况
 router.get('/SignInState', function(req,res,next){
   //
-  SignIn.find({ClassId: req.query.ClassId, BeginSubjectDate: {$lte: new Date()}, EndSubjectDate: {$gte: new Date()}})
+  var date = new Date();
+  SignIn.find({ClassId: req.query.ClassId, BeginSubjectDate: {$lte: new Date(date.setMinutes(date.getMinutes()+5))}, EndSubjectDate: {$gte: new Date(date.setMinutes(date.getMinutes()-15))}})
       .populate('StudentId')
       .exec(function(err, signs){
         if(err){
