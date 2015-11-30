@@ -968,13 +968,12 @@ router.post('/vacation', function(req,res,next){
     VacationTime: new Date(req.body.VacationTime)
   });
   // *******
-  var client = BaiduPush.createClient(pushOptionAndroid);
+  var client = BaiduPush.createClient(pushOptionIos);
   var option = {
     push_type: 2,
-    tag: stu.Number,
-    msg_keys:"testkey",
-    device_type:3,
-    messages:{"title":"请假申请","description":"你的申请已提交，请耐心等待老师审批。"},
+    tag: "0110140105",
+      device_type:4,
+    messages: {"aps":{"alert":"test"}},
     deploy_status:1,
     message_type:1
   };
