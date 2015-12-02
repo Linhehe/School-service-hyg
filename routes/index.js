@@ -4,8 +4,10 @@ var router = express.Router();
 
 var xlsx = require('node-xlsx');
 
-var JPush = require("jpush-sdk/lib/JPush/JPush.js");
-var client = JPush.buildClient('9a560a04b31b41c643b8445f', 'b1740488c70f66f5e3c70049');
+var async = require('async');
+
+//var JPush = require("jpush-sdk/lib/JPush/JPush.js");
+//var client = JPush.buildClient('9a560a04b31b41c643b8445f', 'b1740488c70f66f5e3c70049');
 
 // 百度推送
 var BaiduPush   = require('baidu-push');
@@ -30,7 +32,7 @@ var mongoose = require('mongoose');
 // mongodb://linhehe:linhehe@113.31.89.205:27017/test
 // mongodb://linhehe:hyg&1qaz2wSX@113.31.89.205:27017/school
 //声明数据库链接
-mongoose.connect('mongodb://linhehe:hyg&1qaz2wSX@113.31.89.205:27017/school', function(err){
+mongoose.connect('mongodb://linhehe:linhehe@113.31.89.205:27017/test', function(err){
   if(err){
     console.error(err);
   } else{
@@ -57,7 +59,7 @@ require('../models/Messages');
 require('../models/Excels');
 
 
-require('../models/testSignIns');
+require('../models/Test');
 
 //在数据库中开辟一块区域用于存储模型Myclass的值
 var Student = mongoose.model('Student');
@@ -77,34 +79,15 @@ var College = mongoose.model('College');
 var School = mongoose.model('School');
 var Excel = mongoose.model('Excel');
 
-var testSignIn = mongoose.model('testSignIn');
+var Test = mongoose.model('Test');
 
 var obj = xlsx.parse('public/files/kcb.xls');
 
 var httpAddress = 'http://113.31.89.205:4343/images/';
 
-//var i = 0;
-//while(i<obj.length){
-//  console.log('name = ' + obj[i].name + '; i = '+ i + 'data = ' + obj[i].data[0]);
-//  var excel = new Excel({ClassName: obj[i].name, Number: i});
-//  excel.save();
-//  i++;
-//}
-
-//AddressName: String,
-//    Address: {lat: Number,lng: Number},
-//Scope: Number // 范围
-
-//var add1 = new Address({
-//  AddressName:'S3',
-//  Address:{lat:113.36099,lng:22.132202},
-//  Scope:0.0000000754
-//})
-//add1.save();
-
-var AV = require('avoscloud-sdk').AV;
-AV.initialize("lkpg8p3k1wteb6uiqc398g9uk7yoxkk6vv0li0dw1aivj70j",
-    "6vv9rhjr0hsep9gj5lb57gzcext5kehmz230k4i3vyy66ajv");
+//var AV = require('avoscloud-sdk').AV;
+//AV.initialize("lkpg8p3k1wteb6uiqc398g9uk7yoxkk6vv0li0dw1aivj70j",
+//    "6vv9rhjr0hsep9gj5lb57gzcext5kehmz230k4i3vyy66ajv");
 
 
 /* GET home page. */
@@ -113,38 +96,38 @@ router.get('/', function(req, res, next) {
 });
 
 // 短信验证(发送)
-router.get('/code', function(req,res,next){
-  console.log('phone:'+req.query.Phone);
-
-  AV.Cloud.requestSmsCode({
-    mobilePhoneNumber: req.query.Phone,
-    name: '短信验证',
-    op: '手机验证',
-    ttl: 5
-  }).then(function(){
-    //发送成功
-    console.log('success');
-    res.send('success');
-  }, function(err){
-    //发送失败
-    console.log('error');
-    res.send('error');
-  });
-});
+//router.get('/code', function(req,res,next){
+//  console.log('phone:'+req.query.Phone);
+//
+//  AV.Cloud.requestSmsCode({
+//    mobilePhoneNumber: req.query.Phone,
+//    name: '短信验证',
+//    op: '手机验证',
+//    ttl: 5
+//  }).then(function(){
+//    //发送成功
+//    console.log('success');
+//    res.send('success');
+//  }, function(err){
+//    //发送失败
+//    console.log('error');
+//    res.send('error');
+//  });
+//});
 
 //验证验证码的正确
-router.post('/codecheck',function(req,res,next){
-  console.log(req.body.code);
-  AV.Cloud.verifySmsCode(req.body.code, req.body.Phone).then(function(){
-    //验证成功
-    console.log('验证成功');
-    res.send('success');
-  }, function(err){
-    //验证失败
-    console.log('验证失败');
-    res.send('error');
-  });
-});
+//router.post('/codecheck',function(req,res,next){
+//  console.log(req.body.code);
+//  AV.Cloud.verifySmsCode(req.body.code, req.body.Phone).then(function(){
+//    //验证成功
+//    console.log('验证成功');
+//    res.send('success');
+//  }, function(err){
+//    //验证失败
+//    console.log('验证失败');
+//    res.send('error');
+//  });
+//});
 
 
 
@@ -216,7 +199,8 @@ router.get('/login',function(req,res,next){
       else{
         if(doc){
           res.json(doc);
-          console.log(doc);
+          doc.Device = req.query.Device;
+          doc.save();
         }
         else{
           res.send('请输入正确的信息');
@@ -260,10 +244,15 @@ router.get('/student_person',function(req,res,next){
     if(err!=null){next(err);}
     else{
       console.log(doc);
-      doc.Photo = httpAddress+doc.Photo;
-      res.json(doc)
+      if(doc != null) {
+        doc.Photo = httpAddress + doc.Photo;
+        res.jsonp(doc)
+      }else
+      {
+        throw new Error("不存在此学号用户");
+      }
     }
-  })
+  });
 });
 
 //学生端、保存个人修改信息
@@ -369,7 +358,7 @@ router.get('/MyTeachers', function (req, res, next) {
       res.json(array);
     }
   })
-})
+});
 //学生个人信息注销清空设备
 router.post('/removeDeviceId', function(req,res,next){
   //
@@ -381,26 +370,6 @@ router.post('/removeDeviceId', function(req,res,next){
     }
   })
 });
-
-//SubjectUnit.find({_id:"55e44495e6a6aba20847f2d6"}, function(err,doc){
-//  console.log(doc);
-//});
-//SubjectUnit.find({Address:"55c9eb49173e966202314d1d"}, function(err,doc){
-//  console.log(doc);
-//  var date = new Date("2015-9-8 12:25:00");
-//  date.setHours('14')
-//  //if(doc[1].BeginSubjectDate<date && doc[1].EndSubjectDate>date || true ){
-//  //  console.log(doc[1].BeginSubjectDate.toLocaleString());
-//  //  console.log(date);
-//  //}
-//  //var date = new Date();
-//  //for(var i=0;i<doc.length;i++){
-//  //  //console.log(doc[i].BeginSubjectDate);
-//  //  if(doc[i].BeginSubjectDate<date && doc[i].EndSubjectDate>date){
-//  //    console.error(doc[i]);
-//  //  }
-//  //}
-//});
 
 
 
@@ -477,7 +446,7 @@ router.get('/get_wifi', function(req,res,next){
           }
         }
       })
-})
+});
 
 
 //安卓、普通学生检查自己的签到状态
@@ -521,7 +490,7 @@ router.post('/help_sign',function(req,res,next){
       }
     }
   });
-})
+});
 
 //安卓、普通学生检查纪委是否签到
 router.get('/check_Member',function(req,res,next){
@@ -546,7 +515,7 @@ router.get('/check_Member',function(req,res,next){
           }
         }
       })
-})
+});
 
 //安卓，纪委开启热点时检查自己是否签到
 router.post('/check_sigin',function(req,res,next){
@@ -558,7 +527,7 @@ router.post('/check_sigin',function(req,res,next){
       res.send('0');
     }
   })
-})
+});
 
 //安卓、纪委开启热点修改SSID
 router.post('/change_wifi',function(req,res,next){
@@ -568,7 +537,7 @@ router.post('/change_wifi',function(req,res,next){
       res.json(doc);
     }
   })
-})
+});
 
 
 
@@ -1506,18 +1475,18 @@ router.post('/SendMessage', function(req,res,next){
   var date = new Date();
   if(req.body.ClassId == '全院'){
     //
-    client.push().setPlatform('ios', 'android')
-        .setAudience(JPush.tag(req.body.CollegeId))
-        .setNotification(req.body.Content, JPush.ios(req.body.Content, req.body.Title), JPush.android(req.body.Content, req.body.Title, 2))
-        .setOptions(null, 60)
-        .send(function(err, res) {
-          if (err) {
-            console.log(err.message);
-          } else {
-            console.log('Sendno: ' + res.sendno);
-            console.log('Msg_id: ' + res.msg_id);
-          }
-        });
+    //client.push().setPlatform('ios', 'android')
+    //    .setAudience(JPush.tag(req.body.CollegeId))
+    //    .setNotification(req.body.Content, JPush.ios(req.body.Content, req.body.Title), JPush.android(req.body.Content, req.body.Title, 2))
+    //    .setOptions(null, 60)
+    //    .send(function(err, res) {
+    //      if (err) {
+    //        console.log(err.message);
+    //      } else {
+    //        console.log('Sendno: ' + res.sendno);
+    //        console.log('Msg_id: ' + res.msg_id);
+    //      }
+    //    });
     //
     var message = new Message({
       //
@@ -1532,18 +1501,18 @@ router.post('/SendMessage', function(req,res,next){
   }
   else if(req.body.ClassId == '全专业'){
     //
-    client.push().setPlatform('ios', 'android')
-        .setAudience(JPush.tag(req.body.ProfessionId))
-        .setNotification(req.body.Content, JPush.ios(req.body.Content, req.body.Title), JPush.android(req.body.Content, req.body.Title, 2))
-        .setOptions(null, 60)
-        .send(function(err, res) {
-          if (err) {
-            console.log(err.message);
-          } else {
-            console.log('Sendno: ' + res.sendno);
-            console.log('Msg_id: ' + res.msg_id);
-          }
-        });
+    //client.push().setPlatform('ios', 'android')
+    //    .setAudience(JPush.tag(req.body.ProfessionId))
+    //    .setNotification(req.body.Content, JPush.ios(req.body.Content, req.body.Title), JPush.android(req.body.Content, req.body.Title, 2))
+    //    .setOptions(null, 60)
+    //    .send(function(err, res) {
+    //      if (err) {
+    //        console.log(err.message);
+    //      } else {
+    //        console.log('Sendno: ' + res.sendno);
+    //        console.log('Msg_id: ' + res.msg_id);
+    //      }
+    //    });
     //
     var message = new Message({
       //
@@ -1559,18 +1528,18 @@ router.post('/SendMessage', function(req,res,next){
   }
   else{
     //
-    client.push().setPlatform('ios', 'android')
-        .setAudience(JPush.tag(req.body.ClassId))
-        .setNotification(req.body.Content, JPush.ios(req.body.Content, req.body.Title), JPush.android(req.body.Content, req.body.Title, 2))
-        .setOptions(null, 60)
-        .send(function(err, res) {
-          if (err) {
-            console.log(err.message);
-          } else {
-            console.log('Sendno: ' + res.sendno);
-            console.log('Msg_id: ' + res.msg_id);
-          }
-        });
+    //client.push().setPlatform('ios', 'android')
+    //    .setAudience(JPush.tag(req.body.ClassId))
+    //    .setNotification(req.body.Content, JPush.ios(req.body.Content, req.body.Title), JPush.android(req.body.Content, req.body.Title, 2))
+    //    .setOptions(null, 60)
+    //    .send(function(err, res) {
+    //      if (err) {
+    //        console.log(err.message);
+    //      } else {
+    //        console.log('Sendno: ' + res.sendno);
+    //        console.log('Msg_id: ' + res.msg_id);
+    //      }
+    //    });
     //
     var message = new Message({
       //
@@ -1585,13 +1554,159 @@ router.post('/SendMessage', function(req,res,next){
       //Address: req.body.Address // 活动地点(选填)
     });
   }
-  message.save(function(err){
-    if(err){
-      next(err);
-    } else{
-      res.send('信息发送成功');
-    }
-  });
+  if(message.College != undefined && message.Profession == undefined && message.Class == undefined){
+    // 全院
+    Teacher.findOne({_id: req.body.Teacher}, function(err,teacher){
+      if(err){
+        next(err);
+      } else{
+        if(teacher){
+          if(teacher.Device == "Android"){
+            var client = BaiduPush.createClient(pushOptionAndroid);
+            var option = {
+              push_type: 2,
+              tag: message.College,
+              msg_keys:"testkey",
+              device_type:3,
+              messages:{"title":"新的通知","description":"您有新的通知"},
+              deploy_status:1,
+              message_type:1
+            };
+          } else{
+            var client = BaiduPush.createClient(pushOptionIos);
+            var option = {
+              push_type: 2,
+              tag: message.College,
+              device_type:4,
+              messages: {"aps":{"alert":"您有新的通知"}},
+              deploy_status:1,
+              message_type:1
+            };
+          }
+          client.pushMsg(option, function(error, result) {
+            if(error){
+              res.send('服务器错误');
+            } else{
+              if(result.response_params.success_amount == 1){
+                //res.send('提交成功');
+                message.save(function(err){
+                  if(err){
+                    next(err);
+                  } else{
+                    res.send('信息发送成功');
+                  }
+                });
+              } else{
+                res.send('提交失败，请重试');
+              }
+            }
+          });
+        }
+      }
+    });
+  }
+  else if(message.College != undefined && message.Profession != undefined && message.Class ==undefined){
+    // 全专业
+    Teacher.findOne({_id: req.body.Teacher}, function(err,teacher){
+      if(err){
+        next(err);
+      } else{
+        if(teacher){
+          if(teacher.Device == "Android"){
+            var client = BaiduPush.createClient(pushOptionAndroid);
+            var option = {
+              push_type: 2,
+              tag: message.Profession,
+              msg_keys:"testkey",
+              device_type:3,
+              messages:{"title":"新的通知","description":"您有新的通知"},
+              deploy_status:1,
+              message_type:1
+            };
+          } else{
+            var client = BaiduPush.createClient(pushOptionIos);
+            var option = {
+              push_type: 2,
+              tag: message.Profession,
+              device_type:4,
+              messages: {"aps":{"alert":"您有新的通知"}},
+              deploy_status:1,
+              message_type:1
+            };
+          }
+          client.pushMsg(option, function(error, result) {
+            if(error){
+              res.send('服务器错误');
+            } else{
+              if(result.response_params.success_amount == 1){
+                //res.send('提交成功');
+                message.save(function(err){
+                  if(err){
+                    next(err);
+                  } else{
+                    res.send('信息发送成功');
+                  }
+                });
+              } else{
+                res.send('提交失败，请重试');
+              }
+            }
+          });
+        }
+      }
+    });
+  }
+  else{
+    // 全班
+    Teacher.findOne({_id: req.body.Teacher}, function(err,teacher){
+      if(err){
+        next(err);
+      } else{
+        if(teacher){
+          if(teacher.Device == "Android"){
+            var client = BaiduPush.createClient(pushOptionAndroid);
+            var option = {
+              push_type: 2,
+              tag: message.Class,
+              msg_keys:"testkey",
+              device_type:3,
+              messages:{"title":"新的通知","description":"您有新的通知"},
+              deploy_status:1,
+              message_type:1
+            };
+          } else{
+            var client = BaiduPush.createClient(pushOptionIos);
+            var option = {
+              push_type: 2,
+              tag: message.Class,
+              device_type:4,
+              messages: {"aps":{"alert":"您有新的通知"}},
+              deploy_status:1,
+              message_type:1
+            };
+          }
+          client.pushMsg(option, function(error, result) {
+            if(error){
+              res.send('服务器错误');
+            } else{
+              if(result.response_params.success_amount == 1){
+                //res.send('提交成功');
+                message.save(function(err){
+                  if(err){
+                    next(err);
+                  } else{
+                    res.send('信息发送成功');
+                  }
+                });
+              } else{
+                res.send('提交失败，请重试');
+              }
+            }
+          });
+        }
+      }
+    });
+  }
 });
 // 教师-信息发送 *******
 
@@ -2151,35 +2266,6 @@ router.get('/SignInState', function(req,res,next){
 //  console.log(signs);
 //});
 
-//"_id" : ObjectId("5603a430065c87e7060865da"),
-//    "Purview" : 5,
-//    "StudentName" : "唐纯玲",
-//    "Number" : "0104140247",
-//    "Password" : "123",
-//    "Classes" : ObjectId("5603a41956494f239c9f8937"),
-//    "__v" : 0,
-//    "Professions" : ObjectId("56000c0f56494f237ca9a98d"),
-//    "Colleges" : ObjectId("55ed4e76c5e8329906b14051"),
-//    "DeviceId" : "",
-//    "IsSignIn" : 0,
-//    "WiFiSSID" : "0",
-//    "FatherPhone" : "",
-//    "MotherPhone" : "",
-//    "Photo" : "0104140247.jpg"
-//
-//"StudentId" : ObjectId("5603a430065c87e7060865da"),
-//    "ClassId" : ObjectId("5603a41956494f239c9f8937"),
-//    "TeacherName" : "钟丽萍",
-//    "SubjectName" : "Photoshop图像处理",
-//    "BeginSubjectDate" : ISODate("2015-12-15T00:00:00.000Z"),
-//    "EndSubjectDate" : ISODate("2015-12-15T03:50:00.000Z"),
-//    "AddressName" : "S1",
-//    "ClassRoomName" : "503",
-//    "FirstSignInState" : 0,
-//    "SecondSignInState" : 0,
-//    "Ctnot" : 0,
-//    "__v" : 0
-
 //SignIn.findOne({_id:'565bb66683d07263a21c741f'}, function(err,signs){
 //  console.log(signs);
 //});
@@ -2221,6 +2307,24 @@ router.get('/addMessage_test', function(req,res,next){
 //  });
 //});
 
+//for(var i=0; i<100; i++){
+//  var test = new Test({
+//    test : i
+//  });
+//  test.save();
+//}
+Test.find({}, function(err, data) {
+  async.each(data, function(dataItem, callback) {
+    dataItem.remove(function(err, result) {
+      if(err){
+        console.error(err);
+      } else{
+        callback();
+        console.log(result);
+      }
+    });
+  });
+});
 
 module.exports = router;
 
