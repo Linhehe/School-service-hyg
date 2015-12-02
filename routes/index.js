@@ -28,6 +28,7 @@ var pushOptionAndroid = {
 var mongoose = require('mongoose');
 
 // mongodb://linhehe:linhehe@113.31.89.205:27017/test
+// mongodb://linhehe:hyg&1qaz2wSX@113.31.89.205:27017/school
 //声明数据库链接
 mongoose.connect('mongodb://linhehe:hyg&1qaz2wSX@113.31.89.205:27017/school', function(err){
   if(err){
@@ -2107,29 +2108,42 @@ var j5 = schedule.scheduleJob(rule5, function(){
 // 学委查看考勤状况
 router.get('/SignInState', function(req,res,next){
   //
-  var date = new Date();
-  SignIn.find({ClassId: req.query.ClassId, BeginSubjectDate: {$lte: new Date(date.setMinutes(date.getMinutes()+5))}, EndSubjectDate: {$gte: new Date(date.setMinutes(date.getMinutes()-15))}})
-      .populate('StudentId')
-      .exec(function(err, signs){
-        if(err){
-          next(err);
-        } else{
-          if(signs.length != 0){
-            //console.log(signs);
-            var array = [];
-            signs.forEach(function(item){
-              //if(item.StudentId == null)
-              //{
-              //  console.log(JSON.stringify(item));
-              //}
-              array.push({StudentName: item.StudentId.StudentName, FirstSignInState: item.FirstSignInState, SecondSignInState: item.SecondSignInState});
-            });
-            res.json(array);
-          } else{
-            res.send('没课');
-          }
-        }
+  SignIn.aggregate({"$match":{"ClassId":mongoose.Types.ObjectId(req.query.ClassId)}},
+      {"$group":{"_id":{"subject":"$SubjectName",begin:"$BeginSubjectDate",end:"$EndSubjectDate"},
+        my:{$push:{FirstSignInState:"$FirstSignInState",SecondSignInState:"$SecondSignInState",student:"$StudentId"}}}}
+      ,{"$group":{_id:{"subject":"$_id.subject"},jh:{$push:{begin:"$_id.begin",end:"$_id.end",my:"$my"}}}}).exec(function(err,doc){
+        Student.populate(doc,{path:"jh.my.student"},function(error,doc){
+          //
+          if(error) next(error);
+          res.jsonp(doc);
+        });
       });
+  //var date = new Date();
+  //SignIn.find({ClassId: req.query.ClassId, BeginSubjectDate: {$lte: new Date(date.setMinutes(date.getMinutes()+5))}, EndSubjectDate: {$gte: new Date(date.setMinutes(date.getMinutes()-15))}})
+  //    .populate('StudentId')
+  //    .exec(function(err, signs){
+  //      if(err){
+  //        next(err);
+  //      } else{
+  //        if(signs.length != 0){
+  //          //console.log(signs);
+  //          var array = [];
+  //          signs.forEach(function(item){
+  //            if(item.StudentId == null)
+  //            {
+  //              console.log(JSON.stringify(item));
+  //              res.send('服务器错误，请联系胡玉贵老师');
+  //            }
+  //            else{
+  //              array.push({StudentName: item.StudentId.StudentName, FirstSignInState: item.FirstSignInState, SecondSignInState: item.SecondSignInState});
+  //            }
+  //          });
+  //          res.json(array);
+  //        } else{
+  //          res.send('没课');
+  //        }
+  //      }
+  //    });
 });
 
 //var date = new Date('2015-11-30 12:01');
@@ -2188,7 +2202,7 @@ router.get('/addMessage_test', function(req,res,next){
 
 //SignIn.aggregate(
 //    [
-//      {"$match":{"ClassId":mongoose.Types.ObjectId("56559e535234c69804a2531b")}},
+//      {"$match":{"ClassId": mongoose.Types.ObjectId("56559e535234c69804a2531b")}},
 //      {"$group": { "_id": { ClassId: "$ClassId", BeginSubjectDate: "$BeginSubjectDate",EndSubjectDate: "$EndSubjectDate" } } }
 //    ]
 //).exec(function(err,result){
@@ -2200,14 +2214,13 @@ router.get('/addMessage_test', function(req,res,next){
 //});
 
 
-//SignIn.find({ClassId: '55ed4d83100c389106ad7874'}, function(err,signs){
+//SignIn.find({ClassId: '56559e535234c69804a2531b'}, function(err,signs){
 //  signs.forEach(function(item){
+//    console.log('ok');
 //    item.remove();
 //  });
 //});
 
 
 module.exports = router;
-
-//1161,1990
 
