@@ -32,7 +32,7 @@ var mongoose = require('mongoose');
 // mongodb://linhehe:linhehe@113.31.89.205:27017/test
 // mongodb://linhehe:hyg&1qaz2wSX@113.31.89.205:27017/school
 //声明数据库链接
-mongoose.connect('mongodb://linhehe:linhehe@113.31.89.205:27017/test', function(err){
+mongoose.connect('mongodb://linhehe:hyg&1qaz2wSX@113.31.89.205:27017/school', function(err){
   if(err){
     console.error(err);
   } else{
