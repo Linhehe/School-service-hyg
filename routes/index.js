@@ -2313,18 +2313,18 @@ router.get('/addMessage_test', function(req,res,next){
 //  });
 //  test.save();
 //}
-Test.find({}, function(err, data) {
-  async.each(data, function(dataItem, callback) {
-    dataItem.remove(function(err, result) {
-      if(err){
-        console.error(err);
-      } else{
-        callback();
-        console.log(result);
-      }
-    });
-  });
-});
+//Test.find({}, function(err, data) {
+//  async.each(data, function(dataItem, callback) {
+//    dataItem.remove(function(err, result) {
+//      if(err){
+//        console.error(err);
+//      } else{
+//        callback();
+//        console.log(result);
+//      }
+//    });
+//  });
+//});
 
 module.exports = router;
 
