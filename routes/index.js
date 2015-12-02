@@ -246,9 +246,9 @@ router.get('/student_person',function(req,res,next){
       console.log(doc);
       if(doc != null) {
         doc.Photo = httpAddress + doc.Photo;
-        res.jsonp(doc)
-      }else
-      {
+        res.jsonp(doc);
+      }
+      else {
         throw new Error("不存在此学号用户");
       }
     }
